@@ -8,6 +8,6 @@ class ReleaseRepository(Protocol):
         """Get a release by its ID."""
         ...
 
-    def list_releases(self, cursor: str, limit: int) -> List[Release]:
+    def list_releases(self, cursor: int, limit: int) -> List[Release]:
         """List all releases with pagination."""
         ...
