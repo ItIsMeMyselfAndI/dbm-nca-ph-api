@@ -1,4 +1,4 @@
-from core.interfaces.record_repository import RecordRepository
+from src.core.interfaces.record_repository import RecordRepository
 
 
 class ListRecordsByDepartment:

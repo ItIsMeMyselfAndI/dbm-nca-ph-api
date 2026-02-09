@@ -1,20 +1,18 @@
 from typing import List
 
-from core.domain.record import Record
-from core.interfaces.record_repository import RecordRepository
+from src.core.domain.record import Record
+from src.core.interfaces.record_repository import RecordRepository
 
 
 class SupabaseRecordRepository(RecordRepository):
     def __init__(self, client):
         self.client = client
 
-    def get_record_by_id(self, record_id: str) -> Record:
-        response = (
-            self.client.table("records").select("*").eq("id", record_id).execute()
-        )
+    def get_record_by_id(self, id: int) -> Record:
+        response = self.client.table("records").select("*").eq("id", id).execute()
         data = response.data
         if not data:
-            raise ValueError(f"Record with ID {record_id} not found.")
+            raise ValueError(f"Record with ID {id} not found.")
         record = Record(**data[0])
         return record
 

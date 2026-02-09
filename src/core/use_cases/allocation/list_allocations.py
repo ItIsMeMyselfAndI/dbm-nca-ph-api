@@ -1,4 +1,4 @@
-from core.interfaces.allocation_repository import AllocationRepository
+from src.core.interfaces.allocation_repository import AllocationRepository
 
 
 class ListAllocations:

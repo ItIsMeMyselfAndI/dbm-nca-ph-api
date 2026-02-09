@@ -1,10 +1,10 @@
 from typing import List, Protocol
 
-from core.domain.allocation import Allocation
+from src.core.domain.allocation import Allocation
 
 
 class AllocationRepository(Protocol):
-    def get_allocation_by_id(self, allocation_id: str) -> Allocation:
+    def get_allocation_by_id(self, id: int) -> Allocation:
         """Get an allocation by its ID."""
         ...
 

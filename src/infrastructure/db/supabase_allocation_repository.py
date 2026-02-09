@@ -1,24 +1,19 @@
 from typing import List
 from supabase import Client
 
-from core.domain.allocation import Allocation
-from core.interfaces.allocation_repository import AllocationRepository
+from src.core.domain.allocation import Allocation
+from src.core.interfaces.allocation_repository import AllocationRepository
 
 
 class SupabaseAllocationRepository(AllocationRepository):
     def __init__(self, client: Client):
         self.client = client
 
-    def get_allocation_by_id(self, allocation_id: str) -> Allocation:
-        response = (
-            self.client.table("allocations")
-            .select("*")
-            .eq("id", allocation_id)
-            .execute()
-        )
+    def get_allocation_by_id(self, id: int) -> Allocation:
+        response = self.client.table("allocations").select("*").eq("id", id).execute()
         data = response.data
         if not data:
-            raise ValueError(f"Allocation with ID {allocation_id} not found.")
+            raise ValueError(f"Allocation with ID {id} not found.")
         allocation = Allocation(**data[0])
         return allocation
 

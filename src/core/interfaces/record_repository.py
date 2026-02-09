@@ -1,10 +1,10 @@
 from typing import List, Protocol
 
-from core.domain.record import Record
+from src.core.domain.record import Record
 
 
 class RecordRepository(Protocol):
-    def get_record_by_id(self, record_id: str) -> Record:
+    def get_record_by_id(self, id: int) -> Record:
         """Get a record by its ID."""
         ...
 
