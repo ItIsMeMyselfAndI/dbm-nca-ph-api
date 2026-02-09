@@ -1,79 +1,54 @@
-from typing import List
-from supabase import Client
+from typing import Dict, List
 
+from src.core.domain.allocation_filter import AllocationFilter
 from src.core.domain.allocation import Allocation
 from src.core.interfaces.allocation_repository import AllocationRepository
+from src.infrastructure.db.supabase_client import client
 
 
 class SupabaseAllocationRepository(AllocationRepository):
-    def __init__(self, client: Client):
+    def __init__(self):
         self.client = client
 
-    def get_allocation_by_id(self, id: int) -> Allocation:
+    def get_allocation_by_id(self, id: str) -> Allocation:
         response = self.client.table("allocations").select("*").eq("id", id).execute()
-        data = response.data
+        data = response.model_dump().get("data", None)
         if not data:
             raise ValueError(f"Allocation with ID {id} not found.")
+
         allocation = Allocation(**data[0])
         return allocation
 
-    def list_allocations(self, cursor: int, limit: int) -> List[Allocation]:
-        response = (
-            self.client.table("allocations")
-            .select("*")
-            .range(cursor, cursor + limit - 1)
-            .execute()
-        )
-        data = response.data
+    def list_allocations(
+        self, limit: int, cursor: str | None = None
+    ) -> List[Allocation]:
+        query = self.client.table("allocations").select("*")
+        if cursor is not None:
+            query = query.gt("id", cursor)
+        query = query.order("id", desc=False).limit(limit)
+
+        response = query.execute()
+        data = response.model_dump().get("data", None)
         if not data:
             return []
+
         allocations = [Allocation(**item) for item in data]
         return allocations
 
-    def list_allocations_by_agency(
-        self, agency_id: str, cursor: int, limit: int
+    def list_allocations_by_filter(
+        self, limit: int, filter: Dict[AllocationFilter, str], cursor: str | None = None
     ) -> List[Allocation]:
-        response = (
-            self.client.table("allocations")
-            .select("*")
-            .eq("agency_id", agency_id)
-            .range(cursor, cursor + limit - 1)
-            .execute()
-        )
-        data = response.data
-        if not data:
-            return []
-        allocations = [Allocation(**item) for item in data]
-        return allocations
+        key, value = list(filter.items())[0]
 
-    def list_allocations_by_nca_number(
-        self, nca_number: str, cursor: int, limit: int
-    ) -> List[Allocation]:
-        response = (
-            self.client.table("allocations")
-            .select("*")
-            .eq("nca_number", nca_number)
-            .range(cursor, cursor + limit - 1)
-            .execute()
-        )
-        data = response.data
-        if not data:
-            return []
-        allocations = [Allocation(**item) for item in data]
-        return allocations
+        query = self.client.table("allocations").select("*").eq(key.value, value)
+        if cursor is not None:
+            query = query.gt("id", cursor)
+        query = query.order("id", desc=False).limit(limit)
 
-    def list_allocations_by_operating_unit(
-        self, operating_unit: str, cursor: int, limit: int
-    ) -> List[Allocation]:
-        response = (
-            self.client.table("allocations")
-            .select("*")
-            .eq("operating_unit", operating_unit)
-            .range(cursor, cursor + limit - 1)
-            .execute()
-        )
-        data = response.data
+        response = query.execute()
+        data = response.model_dump().get("data", None)
         if not data:
             return []
+
         allocations = [Allocation(**item) for item in data]
         return allocations

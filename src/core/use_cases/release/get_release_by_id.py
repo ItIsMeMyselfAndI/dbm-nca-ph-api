@@ -1,3 +1,4 @@
+from src.core.domain.release import Release
 from src.core.interfaces.release_repository import ReleaseRepository
 
 
@@ -5,5 +6,5 @@ class GetReleaseById:
     def __init__(self, release_repository: ReleaseRepository):
         self.release_repository = release_repository
 
-    def execute(self, id: str):
+    def execute(self, id: str) -> Release:
         return self.release_repository.get_release_by_id(id)

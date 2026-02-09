@@ -1,10 +1,11 @@
-from typing import List, Protocol
+from typing import Dict, List, Protocol
 
+from src.core.domain.record_filter import RecordFilter
 from src.core.domain.record import Record
 
 
 class RecordRepository(Protocol):
-    def get_record_by_id(self, id: int) -> Record:
+    def get_record_by_id(self, id: str) -> Record:
         """Get a record by its ID."""
         ...
 
@@ -12,30 +13,12 @@ class RecordRepository(Protocol):
         """Get a record by its NCA number."""
         ...
 
-    def list_records(self, cursor: int, limit: int) -> List[Record]:
+    def list_records(self, limit: int, cursor: str | None = None) -> List[Record]:
         """List all records with pagination."""
         ...
 
-    def list_records_by_department(
-        self, department_id: str, cursor: int, limit: int
+    def list_records_by_filter(
+        self, limit: int, filter: Dict[RecordFilter, str], cursor: str | None = None
     ) -> List[Record]:
-        """List records filtered by department ID with pagination."""
-        ...
-
-    def list_records_by_nca_type(
-        self, nca_type: str, cursor: int, limit: int
-    ) -> List[Record]:
-        """List records filtered by NCA type with pagination."""
-        ...
-
-    def list_records_by_release_id(
-        self, release_id: str, cursor: int, limit: int
-    ) -> List[Record]:
-        """List records filtered by release ID with pagination."""
-        ...
-
-    def list_records_by_released_date(
-        self, released_date: str, cursor: int, limit: int
-    ) -> List[Record]:
-        """List records filtered by released date with pagination."""
+        """List filtered records with pagination."""
         ...

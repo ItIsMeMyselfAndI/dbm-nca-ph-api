@@ -1,16 +1,18 @@
-from typing import List
+from typing import Dict, List
 
+from src.core.domain.record_filter import RecordFilter
 from src.core.domain.record import Record
 from src.core.interfaces.record_repository import RecordRepository
+from src.infrastructure.db.supabase_client import client
 
 
 class SupabaseRecordRepository(RecordRepository):
-    def __init__(self, client):
+    def __init__(self):
         self.client = client
 
-    def get_record_by_id(self, id: int) -> Record:
+    def get_record_by_id(self, id: str) -> Record:
         response = self.client.table("records").select("*").eq("id", id).execute()
-        data = response.data
+        data = response.model_dump().get("data", None)
         if not data:
             raise ValueError(f"Record with ID {id} not found.")
         record = Record(**data[0])
@@ -23,85 +25,41 @@ class SupabaseRecordRepository(RecordRepository):
             .eq("nca_number", nca_number)
             .execute()
         )
-        data = response.data
+        data = response.model_dump().get("data", None)
         if not data:
             raise ValueError(f"Record with NCA number {nca_number} not found.")
+
         record = Record(**data[0])
         return record
 
-    def list_records(self, cursor: int, limit: int) -> List[Record]:
-        response = (
-            self.client.table("records")
-            .select("*")
-            .range(cursor, cursor + limit - 1)
-            .execute()
-        )
-        data = response.data
+    def list_records(self, limit: int, cursor: str | None = None) -> List[Record]:
+        query = self.client.table("records").select("*")
+        if cursor is not None:
+            query = query.gt("id", cursor)
+        query = query.order("id", desc=False).limit(limit)
+
+        response = query.execute()
+        data = response.model_dump().get("data", None)
         if not data:
             return []
+
         records = [Record(**item) for item in data]
         return records
 
-    def list_records_by_department(
-        self, department_id: str, cursor: int, limit: int
+    def list_records_by_filter(
+        self, limit: int, filter: Dict[RecordFilter, str], cursor: str | None = None
     ) -> List[Record]:
-        response = (
-            self.client.table("records")
-            .select("*")
-            .eq("department_id", department_id)
-            .range(cursor, cursor + limit - 1)
-            .execute()
-        )
-        data = response.data
-        if not data:
-            return []
-        records = [Record(**item) for item in data]
-        return records
+        key, value = list(filter.items())[0]
 
-    def list_records_by_nca_type(
-        self, nca_type: str, cursor: int, limit: int
-    ) -> List[Record]:
-        response = (
-            self.client.table("records")
-            .select("*")
-            .eq("nca_type", nca_type)
-            .range(cursor, cursor + limit - 1)
-            .execute()
-        )
-        data = response.data
-        if not data:
-            return []
-        records = [Record(**item) for item in data]
-        return records
+        query = self.client.table("records").select("*").eq(key.value, value)
+        if cursor is not None:
+            query = query.gt("id", cursor)
+        query = query.order("id", desc=False).limit(limit)
 
-    def list_records_by_release_id(
-        self, release_id: str, cursor: int, limit: int
-    ) -> List[Record]:
-        response = (
-            self.client.table("records")
-            .select("*")
-            .eq("release_id", release_id)
-            .range(cursor, cursor + limit - 1)
-            .execute()
-        )
-        data = response.data
+        response = query.execute()
+        data = response.model_dump().get("data", None)
         if not data:
             return []
-        records = [Record(**item) for item in data]
-        return records
 
-    def list_records_by_released_date(
-        self, released_date: str, cursor: int, limit: int
-    ) -> List[Record]:
-        response = (
-            self.client.table("records")
-            .select("*")
-            .eq("released_date", released_date)
-            .range(cursor, cursor + limit - 1)
-            .execute()
-        )
-        data = response.data
-        if not data:
-            return []
         records = [Record(**item) for item in data]
         return records
