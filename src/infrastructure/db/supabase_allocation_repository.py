@@ -11,7 +11,7 @@ class SupabaseAllocationRepository(AllocationRepository):
         self.client = client
 
     def get_allocation_by_id(self, id: str) -> Allocation:
-        response = self.client.table("allocations").select("*").eq("id", id).execute()
+        response = self.client.table("allocation").select("*").eq("id", id).execute()
         data = response.model_dump().get("data", None)
         if not data:
             raise ValueError(f"Allocation with ID {id} not found.")
@@ -22,9 +22,9 @@ class SupabaseAllocationRepository(AllocationRepository):
     def list_allocations(
         self, limit: int, cursor: str | None = None
     ) -> List[Allocation]:
-        query = self.client.table("allocations").select("*")
+        query = self.client.table("allocation").select("*")
         if cursor is not None:
-            query = query.gt("id", cursor)
+            query = query.gte("id", cursor)
         query = query.order("id", desc=False).limit(limit)
 
         response = query.execute()
@@ -40,9 +40,9 @@ class SupabaseAllocationRepository(AllocationRepository):
     ) -> List[Allocation]:
         key, value = list(filter.items())[0]
 
-        query = self.client.table("allocations").select("*").eq(key.value, value)
+        query = self.client.table("allocation").select("*").eq(key.value, value)
         if cursor is not None:
-            query = query.gt("id", cursor)
+            query = query.gte("id", cursor)
         query = query.order("id", desc=False).limit(limit)
 
         response = query.execute()

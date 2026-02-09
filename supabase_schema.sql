@@ -1,3 +1,7 @@
+DROP TABLE IF EXISTS public.allocation CASCADE;
+DROP TABLE IF EXISTS public.record CASCADE;
+DROP TABLE IF EXISTS public.release CASCADE;
+
 -- releases
 CREATE TABLE public.release (
   id text PRIMARY KEY,
@@ -14,7 +18,7 @@ CREATE TABLE public.release (
 
 -- records
 CREATE TABLE public.record (
-  id int GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   nca_number text NOT NULL UNIQUE,
   nca_type text,
   department text,
@@ -27,7 +31,7 @@ CREATE TABLE public.record (
 
 -- operating units & amounts
 CREATE TABLE public.allocation (
-  id int GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   operating_unit text NOT NULL,
   agency text NOT NULL,
   amount double precision NOT NULL,

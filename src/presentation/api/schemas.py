@@ -6,9 +6,8 @@ T = TypeVar("T")
 
 class CursorPageResponse(BaseModel, Generic[T]):
     items: List[T]
-    cusor: int
-    next_cursor: Optional[int]
-    has_more: bool
+    cursor: Optional[str]
+    next_cursor: Optional[str]
 
 
 class ReleaseResponse(BaseModel):

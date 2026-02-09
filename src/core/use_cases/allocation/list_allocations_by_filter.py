@@ -18,5 +18,5 @@ class ListAllocationsByFilter:
         has_more = len(allocations) == limit + 1
 
         next_cursor = allocations[-1].id if has_more else None
-        relevant_allocations = allocations[:limit]
+        relevant_allocations = allocations[: limit + 1]
         return relevant_allocations, next_cursor

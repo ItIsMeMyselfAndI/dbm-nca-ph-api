@@ -14,5 +14,5 @@ class ListReleases:
         has_more = len(releases) == limit + 1
 
         next_cursor = releases[-1].id if has_more else None
-        relevant_releases = releases[:limit]
+        relevant_releases = releases[: limit + 1]
         return relevant_releases, next_cursor

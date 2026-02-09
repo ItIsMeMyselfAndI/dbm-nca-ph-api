@@ -18,5 +18,5 @@ class ListRecordsByFilter:
         has_more = len(records) == limit + 1
 
         next_cursor = records[-1].id if has_more else None
-        relevant_records = records[:limit]
+        relevant_records = records[: limit + 1]
         return relevant_records, next_cursor
