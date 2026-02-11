@@ -22,7 +22,7 @@ CREATE TABLE public.record (
   nca_number text NOT NULL UNIQUE,
   nca_type text,
   department text,
-  released_date text,
+  released_date timestamptz DEFAULT NULL,
   purpose text,
   created_at timestamptz DEFAULT CURRENT_TIMESTAMP,
   updated_at timestamptz DEFAULT CURRENT_TIMESTAMP,

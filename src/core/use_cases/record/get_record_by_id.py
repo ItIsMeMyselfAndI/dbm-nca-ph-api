@@ -1,4 +1,4 @@
-from src.core.domain.record import Record
+from src.core.entities.record import Record
 from src.core.interfaces.record_repository import RecordRepository
 
 

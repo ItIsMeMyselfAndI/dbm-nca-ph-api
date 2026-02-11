@@ -1,7 +1,7 @@
 from typing import Dict, List, Protocol
 
-from src.core.domain.record_filter import RecordFilter
-from src.core.domain.record import Record
+from src.core.entities.record_filter import RecordFilter
+from src.core.entities.record import Record
 
 
 class RecordRepository(Protocol):

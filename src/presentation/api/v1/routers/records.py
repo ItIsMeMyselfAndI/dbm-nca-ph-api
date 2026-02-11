@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 
-from src.core.domain.record_filter import RecordFilter
+from src.core.entities.record_filter import RecordFilter
 
 from src.core.interfaces.record_repository import RecordRepository
 
@@ -25,6 +25,7 @@ def list_records(
 
     response = CursorPageResponse(
         items=records,
+        count=len(records),
         cursor=cursor,
         next_cursor=next_cursor,
     )
@@ -58,6 +59,7 @@ def list_records_by_filter(
 
     response = CursorPageResponse(
         items=records,
+        count=len(records),
         cursor=cursor,
         next_cursor=next_cursor,
     )

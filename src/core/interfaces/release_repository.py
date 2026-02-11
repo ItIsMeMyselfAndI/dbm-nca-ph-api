@@ -1,6 +1,6 @@
 from typing import List, Protocol
 
-from src.core.domain.release import Release
+from src.core.entities.release import Release
 
 
 class ReleaseRepository(Protocol):

@@ -1,4 +1,4 @@
-from src.core.domain.allocation import Allocation
+from src.core.entities.allocation import Allocation
 from src.core.interfaces.allocation_repository import AllocationRepository
 
 

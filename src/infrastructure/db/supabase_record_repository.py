@@ -1,7 +1,7 @@
 from typing import Dict, List
 
-from src.core.domain.record_filter import RecordFilter
-from src.core.domain.record import Record
+from src.core.entities.record_filter import RecordFilter
+from src.core.entities.record import Record
 from src.core.interfaces.record_repository import RecordRepository
 from src.infrastructure.db.supabase_client import client
 

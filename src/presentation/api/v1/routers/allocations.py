@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 
-from src.core.domain.allocation_filter import AllocationFilter
+from src.core.entities.allocation_filter import AllocationFilter
 
 from src.core.interfaces.allocation_repository import AllocationRepository
 
@@ -27,6 +27,7 @@ def list_allocations(
 
     response = CursorPageResponse(
         items=allocations,
+        count=len(allocations),
         cursor=cursor,
         next_cursor=next_cursor,
     )
@@ -63,6 +64,7 @@ def list_allocations_by_filter(
 
     response = CursorPageResponse(
         items=allocations,
+        count=len(allocations),
         cursor=cursor,
         next_cursor=next_cursor,
     )

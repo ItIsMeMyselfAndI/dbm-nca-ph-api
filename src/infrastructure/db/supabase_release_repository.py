@@ -1,6 +1,6 @@
 from typing import List
 
-from src.core.domain.release import Release
+from src.core.entities.release import Release
 from src.core.interfaces.release_repository import ReleaseRepository
 from src.infrastructure.db.supabase_client import client
 

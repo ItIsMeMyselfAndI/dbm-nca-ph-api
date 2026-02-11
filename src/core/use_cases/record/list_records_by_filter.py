@@ -1,7 +1,7 @@
 from typing import Dict, List, Tuple
 
-from src.core.domain.record import Record
-from src.core.domain.record_filter import RecordFilter
+from src.core.entities.record import Record
+from src.core.entities.record_filter import RecordFilter
 from src.core.interfaces.record_repository import RecordRepository
 
 
@@ -18,5 +18,5 @@ class ListRecordsByFilter:
         has_more = len(records) == limit + 1
 
         next_cursor = records[-1].id if has_more else None
-        relevant_records = records[: limit + 1]
+        relevant_records = records[:limit]
         return relevant_records, next_cursor

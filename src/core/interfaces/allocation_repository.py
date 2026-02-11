@@ -1,7 +1,7 @@
 from typing import Dict, List, Protocol
 
-from src.core.domain.allocation_filter import AllocationFilter
-from src.core.domain.allocation import Allocation
+from src.core.entities.allocation_filter import AllocationFilter
+from src.core.entities.allocation import Allocation
 
 
 class AllocationRepository(Protocol):

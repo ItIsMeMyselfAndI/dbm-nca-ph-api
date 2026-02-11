@@ -1,7 +1,7 @@
 from typing import Dict, List
 
-from src.core.domain.allocation_filter import AllocationFilter
-from src.core.domain.allocation import Allocation
+from src.core.entities.allocation_filter import AllocationFilter
+from src.core.entities.allocation import Allocation
 from src.core.interfaces.allocation_repository import AllocationRepository
 from src.infrastructure.db.supabase_client import client
 

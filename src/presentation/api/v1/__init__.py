@@ -7,5 +7,5 @@ from src.presentation.api.v1.routers.allocations import router as allocations_ro
 router = APIRouter(prefix="/v1")
 
 router.include_router(releases_router)
-router.include_router(allocations_router)
 router.include_router(records_router)
+router.include_router(allocations_router)

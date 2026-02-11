@@ -22,6 +22,7 @@ def list_releases(
 
     response = CursorPageResponse(
         items=releases,
+        count=len(releases),
         cursor=cursor,
         next_cursor=next_cursor,
     )
