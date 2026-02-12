@@ -12,11 +12,9 @@ class ListRecordsByFilter:
     def execute(
         self, limit: int, filter: Dict[RecordFilter, str], cursor: str | None = None
     ) -> Tuple[List[Record], str | None]:
-        records = self.record_repository.list_records_by_filter(
-            limit + 1, filter, cursor
-        )
-        has_more = len(records) == limit + 1
-
-        next_cursor = records[-1].id if has_more else None
-        relevant_records = records[:limit]
-        return relevant_records, next_cursor
+        records = self.record_repository.list_records_by_filter(limit, filter, cursor)
+        if len(records) < limit:
+            next_cursor = None
+        else:
+            next_cursor = records[-1].id
+        return records, next_cursor

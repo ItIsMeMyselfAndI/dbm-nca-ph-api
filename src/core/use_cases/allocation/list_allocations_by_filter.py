@@ -13,10 +13,10 @@ class ListAllocationsByFilter:
         self, limit: int, filter: Dict[AllocationFilter, str], cursor: str | None = None
     ) -> Tuple[List[Allocation], str | None]:
         allocations = self.allocation_repository.list_allocations_by_filter(
-            limit + 1, filter, cursor
+            limit, filter, cursor
         )
-        has_more = len(allocations) == limit + 1
-
-        next_cursor = allocations[-1].id if has_more else None
-        relevant_allocations = allocations[:limit]
-        return relevant_allocations, next_cursor
+        if len(allocations) < limit:
+            next_cursor = None
+        else:
+            next_cursor = allocations[-1].id
+        return allocations, next_cursor

@@ -21,7 +21,7 @@ class SupabaseReleaseRepository(ReleaseRepository):
     def list_releases(self, limit: int, cursor: str | None = None) -> List[Release]:
         query = self.client.table("release").select("*")
         if cursor is not None:
-            query = query.gte("id", cursor)
+            query = query.gt("id", cursor)
         query = query.order("id", desc=False).limit(limit)
 
         response = query.execute()
