@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 
 from src.core.entities.record_filter import RecordFilter
 
@@ -20,16 +20,22 @@ def list_records(
     limit: int = 20,
     repo: RecordRepository = Depends(get_record_repository),
 ):
-    use_case = ListRecords(repo)
-    records, next_cursor = use_case.execute(cursor=cursor, limit=limit)
+    try:
+        use_case = ListRecords(repo)
+        records, next_cursor = use_case.execute(cursor=cursor, limit=limit)
 
-    response = CursorPageResponse(
-        items=records,
-        count=len(records),
-        cursor=cursor,
-        next_cursor=next_cursor,
-    )
-    return response
+        response = CursorPageResponse(
+            items=records,
+            count=len(records),
+            cursor=cursor,
+            next_cursor=next_cursor,
+        )
+        return response
+
+    except ValueError as ve:
+        raise HTTPException(status_code=404, detail=str(ve))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.get("/{id}", response_model=RecordResponse)
@@ -37,9 +43,15 @@ def get_record_by_id(
     id: str,
     repo: RecordRepository = Depends(get_record_repository),
 ):
-    use_case = GetRecordByID(repo)
-    record = use_case.execute(id)
-    return record
+    try:
+        use_case = GetRecordByID(repo)
+        record = use_case.execute(id)
+        return record
+
+    except ValueError as ve:
+        raise HTTPException(status_code=404, detail=str(ve))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.get(
@@ -52,15 +64,23 @@ def list_records_by_filter(
     limit: int = 20,
     repo: RecordRepository = Depends(get_record_repository),
 ):
-    use_case = ListRecordsByFilter(repo)
+    try:
+        use_case = ListRecordsByFilter(repo)
 
-    filter = {filter_key: filter_value}
-    records, next_cursor = use_case.execute(cursor=cursor, filter=filter, limit=limit)
+        filter = {filter_key: filter_value}
+        records, next_cursor = use_case.execute(
+            cursor=cursor, filter=filter, limit=limit
+        )
 
-    response = CursorPageResponse(
-        items=records,
-        count=len(records),
-        cursor=cursor,
-        next_cursor=next_cursor,
-    )
-    return response
+        response = CursorPageResponse(
+            items=records,
+            count=len(records),
+            cursor=cursor,
+            next_cursor=next_cursor,
+        )
+        return response
+
+    except ValueError as ve:
+        raise HTTPException(status_code=404, detail=str(ve))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

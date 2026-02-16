@@ -25,6 +25,11 @@ class SupabaseAllocationRepository(AllocationRepository):
         query = self.client.table("allocation").select("*, record!inner(released_date)")
 
         if cursor:
+            try:
+                self.get_allocation_by_id(cursor)
+            except ValueError:
+                raise ValueError(f"Cursor with ID {cursor} not found.")
+
             response = (
                 self.client.table("allocation")
                 .select("id, record!inner(released_date)")
@@ -73,6 +78,11 @@ class SupabaseAllocationRepository(AllocationRepository):
         )
 
         if cursor:
+            try:
+                self.get_allocation_by_id(cursor)
+            except ValueError:
+                raise ValueError(f"Cursor with ID {cursor} not found.")
+
             response = (
                 self.client.table("allocation")
                 .select("id, record!inner(released_date)")

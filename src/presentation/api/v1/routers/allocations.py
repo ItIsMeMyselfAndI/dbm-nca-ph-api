@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 
 from src.core.entities.allocation_filter import AllocationFilter
 
@@ -22,16 +22,22 @@ def list_allocations(
     limit: int = 20,
     repo: AllocationRepository = Depends(get_allocation_repository),
 ):
-    use_case = ListAllocations(repo)
-    allocations, next_cursor = use_case.execute(cursor=cursor, limit=limit)
+    try:
+        use_case = ListAllocations(repo)
+        allocations, next_cursor = use_case.execute(cursor=cursor, limit=limit)
 
-    response = CursorPageResponse(
-        items=allocations,
-        count=len(allocations),
-        cursor=cursor,
-        next_cursor=next_cursor,
-    )
-    return response
+        response = CursorPageResponse(
+            items=allocations,
+            count=len(allocations),
+            cursor=cursor,
+            next_cursor=next_cursor,
+        )
+        return response
+
+    except ValueError as ve:
+        raise HTTPException(status_code=404, detail=str(ve))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.get("/{id}", response_model=AllocationResponse)
@@ -39,9 +45,15 @@ def get_allocation_by_id(
     id: str,
     repo: AllocationRepository = Depends(get_allocation_repository),
 ):
-    use_case = GetAllocationByID(repo)
-    allocation = use_case.execute(id)
-    return allocation
+    try:
+        use_case = GetAllocationByID(repo)
+        allocation = use_case.execute(id)
+        return allocation
+
+    except ValueError as ve:
+        raise HTTPException(status_code=404, detail=str(ve))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.get(
@@ -55,17 +67,23 @@ def list_allocations_by_filter(
     limit: int = 20,
     repo: AllocationRepository = Depends(get_allocation_repository),
 ):
-    use_case = ListAllocationsByFilter(repo)
+    try:
+        use_case = ListAllocationsByFilter(repo)
 
-    filter = {filter_key: filter_value}
-    allocations, next_cursor = use_case.execute(
-        cursor=cursor, filter=filter, limit=limit
-    )
+        filter = {filter_key: filter_value}
+        allocations, next_cursor = use_case.execute(
+            cursor=cursor, filter=filter, limit=limit
+        )
 
-    response = CursorPageResponse(
-        items=allocations,
-        count=len(allocations),
-        cursor=cursor,
-        next_cursor=next_cursor,
-    )
-    return response
+        response = CursorPageResponse(
+            items=allocations,
+            count=len(allocations),
+            cursor=cursor,
+            next_cursor=next_cursor,
+        )
+        return response
+
+    except ValueError as ve:
+        raise HTTPException(status_code=404, detail=str(ve))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

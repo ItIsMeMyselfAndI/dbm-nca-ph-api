@@ -36,6 +36,11 @@ class SupabaseRecordRepository(RecordRepository):
         query = self.client.table("record").select("*")
 
         if cursor:
+            try:
+                self.get_record_by_id(cursor)
+            except ValueError:
+                raise ValueError(f"Cursor with ID {cursor} not found.")
+
             response = (
                 self.client.table("record")
                 .select("released_date")
@@ -76,6 +81,11 @@ class SupabaseRecordRepository(RecordRepository):
         query = self.client.table("record").select("*").eq(key.value, value)
 
         if cursor:
+            try:
+                self.get_record_by_id(cursor)
+            except ValueError:
+                raise ValueError(f"Cursor with ID {cursor} not found.")
+
             response = (
                 self.client.table("record")
                 .select("released_date")

@@ -20,7 +20,13 @@ class SupabaseReleaseRepository(ReleaseRepository):
 
     def list_releases(self, limit: int, cursor: str | None = None) -> List[Release]:
         query = self.client.table("release").select("*")
+
         if cursor is not None:
+            try:
+                self.get_release_by_id(cursor)
+            except ValueError:
+                raise ValueError(f"Cursor with ID {cursor} not found.")
+
             query = query.gt("id", cursor)
         query = query.order("id", desc=False).limit(limit)
 
