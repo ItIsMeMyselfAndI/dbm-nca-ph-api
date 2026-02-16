@@ -29,6 +29,8 @@ def list_releases(
         )
         return response
 
+    except ValueError as ve:
+        raise HTTPException(status_code=404, detail=str(ve))
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

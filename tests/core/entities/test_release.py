@@ -28,7 +28,7 @@ def test_release():
 
 def test_release_missing_fields():
     with pytest.raises(ValueError) as exc_info:
-        release = Release(  # pyright: ignore
+        Release(  # pyright: ignore
             id="id_2025",
             title="NCA 2025",
             url="https://www.dbm.gov.ph/wp-content/uploads/NCA/2025/NCA_2025.pdf",
@@ -39,7 +39,7 @@ def test_release_missing_fields():
 
 def test_release_non_string_id():
     with pytest.raises(ValueError) as exc_info:
-        release = Release(
+        Release(
             id=123,  # pyright: ignore
             title="NCA 2026",
             url="https://www.dbm.gov.ph/wp-content/uploads/NCA/2026/NCA_2026.pdf",
@@ -51,7 +51,7 @@ def test_release_non_string_id():
 
 def test_release_non_string_title():
     with pytest.raises(ValueError) as exc_info:
-        release = Release(
+        Release(
             id="id_2027",
             title=456,  # pyright: ignore
             url="https://www.dbm.gov.ph/wp-content/uploads/NCA/2027/NCA_2027.pdf",
@@ -63,7 +63,7 @@ def test_release_non_string_title():
 
 def test_release_non_string_url():
     with pytest.raises(ValueError) as exc_info:
-        release = Release(
+        Release(
             id="id_2028",
             title="NCA 2028",
             url=789,  # pyright: ignore
@@ -75,7 +75,7 @@ def test_release_non_string_url():
 
 def test_release_non_string_filename():
     with pytest.raises(ValueError) as exc_info:
-        release = Release(
+        Release(
             id="id_2029",
             title="NCA 2029",
             url="https://www.dbm.gov.ph/wp-content/uploads/NCA/2029/NCA_2029.pdf",
@@ -87,7 +87,7 @@ def test_release_non_string_filename():
 
 def test_release_non_integer_year():
     with pytest.raises(ValueError) as exc_info:
-        release = Release(
+        Release(
             id="id_2030",
             title="NCA 2030",
             url="https://www.dbm.gov.ph/wp-content/uploads/NCA/2030/NCA_2030.pdf",
@@ -99,7 +99,7 @@ def test_release_non_integer_year():
 
 def test_release_non_integer_page_count():
     with pytest.raises(ValueError) as exc_info:
-        release = Release(
+        Release(
             id="id_2031",
             title="NCA 2031",
             url="https://www.dbm.gov.ph/wp-content/uploads/NCA/2031/NCA_2031.pdf",
@@ -112,7 +112,7 @@ def test_release_non_integer_page_count():
 
 def test_release_non_string_file_meta_created_at():
     with pytest.raises(ValueError) as exc_info:
-        release = Release(
+        Release(
             id="id_2032",
             title="NCA 2032",
             url="https://www.dbm.gov.ph/wp-content/uploads/NCA/2032/NCA_2032.pdf",
@@ -125,7 +125,7 @@ def test_release_non_string_file_meta_created_at():
 
 def test_release_non_string_file_meta_modified_at():
     with pytest.raises(ValueError) as exc_info:
-        release = Release(
+        Release(
             id="id_2033",
             title="NCA 2033",
             url="https://www.dbm.gov.ph/wp-content/uploads/NCA/2033/NCA_2033.pdf",

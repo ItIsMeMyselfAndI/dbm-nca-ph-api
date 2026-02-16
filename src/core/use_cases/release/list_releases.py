@@ -13,6 +13,12 @@ class ListReleases:
         if limit <= 0:
             return [], None
 
+        try:
+            if cursor is not None:
+                self.release_repository.get_release_by_id(cursor)
+        except ValueError:
+            raise ValueError(f"Cursor with ID {cursor} not found.")
+
         releases = self.release_repository.list_releases(limit, cursor)
         if len(releases) < limit:
             next_cursor = None

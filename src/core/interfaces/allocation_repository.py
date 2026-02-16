@@ -5,7 +5,7 @@ from src.core.entities.allocation import Allocation
 
 
 class AllocationRepository(Protocol):
-    def get_allocation_by_id(self, id: str) -> Allocation:
+    def get_allocation_by_id(self, id: str) -> Allocation | None:
         """Get an allocation by its ID."""
         ...
 

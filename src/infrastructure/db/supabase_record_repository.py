@@ -10,25 +10,11 @@ class SupabaseRecordRepository(RecordRepository):
     def __init__(self):
         self.client = client
 
-    def get_record_by_id(self, id: str) -> Record:
+    def get_record_by_id(self, id: str) -> Record | None:
         response = self.client.table("record").select("*").eq("id", id).execute()
         data = response.model_dump().get("data", None)
         if not data:
-            raise ValueError(f"Record with ID {id} not found.")
-        record = Record(**data[0])
-        return record
-
-    def get_record_by_nca_number(self, nca_number: str) -> Record:
-        response = (
-            self.client.table("records")
-            .select("*")
-            .eq("nca_number", nca_number)
-            .execute()
-        )
-        data = response.model_dump().get("data", None)
-        if not data:
-            raise ValueError(f"Record with NCA number {nca_number} not found.")
-
+            return None
         record = Record(**data[0])
         return record
 
@@ -36,11 +22,6 @@ class SupabaseRecordRepository(RecordRepository):
         query = self.client.table("record").select("*")
 
         if cursor:
-            try:
-                self.get_record_by_id(cursor)
-            except ValueError:
-                raise ValueError(f"Cursor with ID {cursor} not found.")
-
             response = (
                 self.client.table("record")
                 .select("released_date")
@@ -81,11 +62,6 @@ class SupabaseRecordRepository(RecordRepository):
         query = self.client.table("record").select("*").eq(key.value, value)
 
         if cursor:
-            try:
-                self.get_record_by_id(cursor)
-            except ValueError:
-                raise ValueError(f"Cursor with ID {cursor} not found.")
-
             response = (
                 self.client.table("record")
                 .select("released_date")

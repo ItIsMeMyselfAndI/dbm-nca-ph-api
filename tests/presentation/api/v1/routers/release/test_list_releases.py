@@ -32,29 +32,22 @@ def test_list_releases_with_cursor(client):
 
 def test_list_releases_with_invalid_cursor(client):
     response = client.get("/releases?limit=2&cursor=nonexistent-id")
-    assert response.status_code == 500
+    assert response.status_code == 404
 
 
 def test_list_releases_with_empty_cursor(client):
     response = client.get("/releases?limit=2&cursor=")
-    assert response.status_code == 200
-    data = response.json()
-    assert "items" in data
-    assert data["count"] == 2
-    assert data["cursor"] == ""
-    assert data["next_cursor"] is not None
-    assert len(data["items"]) == 2
-    assert data["items"][0]["id"] == "id_2024"
+    assert response.status_code == 404
 
 
 def test_list_releases_with_leading_trailing_spaces_cursor(client):
     response = client.get("/releases?limit=2&cursor= id_2024 ")
-    assert response.status_code == 500
+    assert response.status_code == 404
 
 
 def test_list_releases_with_case_sensitivity_cursor(client):
     response = client.get("/releases?limit=2&cursor=ID_2024")
-    assert response.status_code == 500
+    assert response.status_code == 404
 
 
 def test_list_releases_with_limit_zero(client):

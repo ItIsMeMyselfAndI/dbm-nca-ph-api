@@ -12,8 +12,8 @@ class MockAllocationRepository(AllocationRepository):
         self.allocations = self._get_mock_allocations()
 
     def _get_mock_allocations(self):
-        base_path = Path(__file__).parent.parent.parent.parent
-        json_path = base_path / "mock_data" / "allocations.json"
+        base_path = Path(__file__).parent.parent
+        json_path = base_path / "data" / "allocations.json"
 
         with open(json_path, "r") as f:
             data = json.load(f)

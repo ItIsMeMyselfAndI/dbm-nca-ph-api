@@ -12,8 +12,8 @@ class MockRecordRepository(RecordRepository):
         self.records = self._get_mock_records()
 
     def _get_mock_records(self):
-        base_path = Path(__file__).parent.parent.parent.parent
-        json_path = base_path / "mock_data" / "records.json"
+        base_path = Path(__file__).parent.parent
+        json_path = base_path / "data" / "records.json"
 
         with open(json_path, "r") as f:
             data = json.load(f)

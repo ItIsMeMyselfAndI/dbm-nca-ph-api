@@ -13,6 +13,12 @@ class ListRecords:
         if limit <= 0:
             return [], None
 
+        try:
+            if cursor is not None:
+                self.record_repository.get_record_by_id(cursor)
+        except ValueError:
+            raise ValueError(f"Cursor with ID {cursor} not found.")
+
         records = self.record_repository.list_records(limit, cursor)
         if len(records) < limit:
             next_cursor = None

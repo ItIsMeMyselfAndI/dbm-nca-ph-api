@@ -7,4 +7,11 @@ class GetAllocationByID:
         self.allocation_repository = allocation_repository
 
     def execute(self, id: str) -> Allocation:
-        return self.allocation_repository.get_allocation_by_id(id)
+        try:
+            allocation = self.allocation_repository.get_allocation_by_id(id)
+            if allocation is None:
+                raise ValueError(f"Allocation with ID {id} not found.")
+            return allocation
+
+        except ValueError as e:
+            raise ValueError(f"Allocation with ID {id} not found.") from e

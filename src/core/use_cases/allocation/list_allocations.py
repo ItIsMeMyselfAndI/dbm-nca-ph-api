@@ -14,6 +14,12 @@ class ListAllocations:
         if limit <= 0:
             return [], None
 
+        try:
+            if cursor is not None:
+                self.allocation_repository.get_allocation_by_id(cursor)
+        except ValueError:
+            raise ValueError(f"Cursor with ID {cursor} not found.")
+
         allocations = self.allocation_repository.list_allocations(limit, cursor)
         if len(allocations) < limit:
             next_cursor = None

@@ -7,5 +7,11 @@ class GetRecordByID:
         self.record_repository = record_repository
 
     def execute(self, id: str) -> Record:
-        """Get a record by its ID."""
-        return self.record_repository.get_record_by_id(id)
+        try:
+            record = self.record_repository.get_record_by_id(id)
+            if record is None:
+                raise ValueError(f"Record with ID {id} not found.")
+            return record
+
+        except ValueError as e:
+            raise ValueError(f"Record with ID {id} not found.") from e

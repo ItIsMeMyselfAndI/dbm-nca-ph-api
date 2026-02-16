@@ -3,7 +3,7 @@ import pytest
 
 @pytest.fixture
 def repo():
-    from tests.infrastructure.db.record.mock_record_repository import (
+    from tests.mock.repositories.mock_record_repository import (
         MockRecordRepository,
     )
 

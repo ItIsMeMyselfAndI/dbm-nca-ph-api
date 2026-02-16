@@ -11,8 +11,8 @@ class MockReleaseRepository(ReleaseRepository):
         self.releases = self._get_mock_releases()
 
     def _get_mock_releases(self):
-        base_path = Path(__file__).parent.parent.parent.parent
-        json_path = base_path / "mock_data" / "releases.json"
+        base_path = Path(__file__).parent.parent
+        json_path = base_path / "data" / "releases.json"
 
         with open(json_path, "r") as f:
             data = json.load(f)

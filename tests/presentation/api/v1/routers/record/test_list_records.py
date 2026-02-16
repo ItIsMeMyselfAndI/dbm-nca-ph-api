@@ -33,12 +33,7 @@ def test_list_records_with_invalid_cursor(client):
 
 def test_list_records_with_empty_cursor(client):
     response = client.get("/records?cursor=")
-    assert response.status_code == 200
-    data = response.json()
-    assert "items" in data
-    assert data["count"] == 20
-    assert data["cursor"] is ""
-    assert data["next_cursor"] is not None
+    assert response.status_code == 404
 
 
 def test_list_records_with_leading_trailing_spaces_cursor(client):

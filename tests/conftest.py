@@ -7,11 +7,11 @@ from src.presentation.api.dependencies import (
     get_record_repository,
     get_release_repository,
 )
-from tests.infrastructure.db.allocation.mock_allocation_repository import (
+from tests.mock.repositories.mock_allocation_repository import (
     MockAllocationRepository,
 )
-from tests.infrastructure.db.record.mock_record_repository import MockRecordRepository
-from tests.infrastructure.db.release.mock_release_repository import (
+from tests.mock.repositories.mock_record_repository import MockRecordRepository
+from tests.mock.repositories.mock_release_repository import (
     MockReleaseRepository,
 )
 

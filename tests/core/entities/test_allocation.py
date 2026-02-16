@@ -20,7 +20,7 @@ def test_allocation():
 
 def test_allocation_missing_fields():
     with pytest.raises(ValueError) as exc_info:
-        allocation = Allocation(  # pyright: ignore
+        Allocation(  # pyright: ignore
             id="126",
             nca_number="NCA-102",
             agency="Agency D",
@@ -31,7 +31,7 @@ def test_allocation_missing_fields():
 
 def test_allocation_non_string_id():
     with pytest.raises(ValueError) as exc_info:
-        allocation = Allocation(
+        Allocation(
             id=123,  # pyright: ignore
             nca_number="NCA-107",
             agency="Agency H",
@@ -43,7 +43,7 @@ def test_allocation_non_string_id():
 
 def test_allocation_non_string_nca_number():
     with pytest.raises(ValueError) as exc_info:
-        allocation = Allocation(
+        Allocation(
             id="131",
             nca_number=456,  # pyright: ignore
             agency="Agency I",
@@ -55,7 +55,7 @@ def test_allocation_non_string_nca_number():
 
 def test_allocation_non_string_agency():
     with pytest.raises(ValueError) as exc_info:
-        allocation = Allocation(
+        Allocation(
             id="132",
             nca_number="NCA-108",
             agency=789,  # pyright: ignore
@@ -67,7 +67,7 @@ def test_allocation_non_string_agency():
 
 def test_allocation_non_string_operating_unit():
     with pytest.raises(ValueError) as exc_info:
-        allocation = Allocation(
+        Allocation(
             id="133",
             nca_number="NCA-109",
             agency="Agency J",
@@ -79,7 +79,7 @@ def test_allocation_non_string_operating_unit():
 
 def test_allocation_non_numeric_amount():
     with pytest.raises(ValueError) as exc_info:
-        allocation = Allocation(
+        Allocation(
             id="134",
             nca_number="NCA-110",
             agency="Agency K",

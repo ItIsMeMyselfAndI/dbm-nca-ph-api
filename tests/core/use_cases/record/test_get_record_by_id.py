@@ -1,0 +1,61 @@
+import pytest
+
+
+@pytest.fixture
+def repo():
+    from tests.mock.repositories.mock_record_repository import (
+        MockRecordRepository,
+    )
+
+    return MockRecordRepository()
+
+
+@pytest.fixture
+def use_case(repo):
+    from src.core.use_cases.record.get_record_by_id import GetRecordByID
+
+    return GetRecordByID(repo)
+
+
+def test_get_record_by_id(use_case):
+    record = use_case.execute("91e80926-ea6a-48d1-bb63-875b4924ecec")
+    assert record.id == "91e80926-ea6a-48d1-bb63-875b4924ecec"
+    assert record.nca_number == "NCA-ROIX-24-0000001"
+    assert record.nca_type == "REG"
+    assert record.released_date == "2024-01-02T07:10:16+00:00"
+    assert record.department == "Department of Health (DOH)"
+    assert (
+        record.purpose
+        == "To cover the regular operating and RLIP requirements for the first quarter (January to March 2024)"
+    )
+    assert record.release_id == "id_2024"
+
+
+def test_get_record_by_id_not_found(use_case):
+    with pytest.raises(ValueError) as exc_info:
+        use_case.execute("nonexistent-id")
+    assert str(exc_info.value) == "Record with ID nonexistent-id not found."
+
+
+def test_get_record_by_id_empty_string(use_case):
+    with pytest.raises(ValueError) as exc_info:
+        use_case.execute("")
+    assert str(exc_info.value) == "Record with ID  not found."
+
+
+def test_get_record_by_id_case_sensitivity(use_case):
+    with pytest.raises(ValueError) as exc_info:
+        use_case.execute("91E80926-EA6A-48D1-BB63-875B4924ECEC")
+    assert (
+        str(exc_info.value)
+        == "Record with ID 91E80926-EA6A-48D1-BB63-875B4924ECEC not found."
+    )
+
+
+def test_get_record_by_id_leading_trailing_spaces(use_case):
+    with pytest.raises(ValueError) as exc_info:
+        use_case.execute(" 91e80926-ea6a-48d1-bb63-875b4924ecec ")
+    assert (
+        str(exc_info.value)
+        == "Record with ID  91e80926-ea6a-48d1-bb63-875b4924ecec  not found."
+    )

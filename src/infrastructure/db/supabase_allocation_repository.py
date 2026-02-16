@@ -10,11 +10,11 @@ class SupabaseAllocationRepository(AllocationRepository):
     def __init__(self):
         self.client = client
 
-    def get_allocation_by_id(self, id: str) -> Allocation:
+    def get_allocation_by_id(self, id: str) -> Allocation | None:
         response = self.client.table("allocation").select("*").eq("id", id).execute()
         data = response.model_dump().get("data", None)
         if not data:
-            raise ValueError(f"Allocation with ID {id} not found.")
+            return None
 
         allocation = Allocation(**data[0])
         return allocation
@@ -25,11 +25,6 @@ class SupabaseAllocationRepository(AllocationRepository):
         query = self.client.table("allocation").select("*, record!inner(released_date)")
 
         if cursor:
-            try:
-                self.get_allocation_by_id(cursor)
-            except ValueError:
-                raise ValueError(f"Cursor with ID {cursor} not found.")
-
             response = (
                 self.client.table("allocation")
                 .select("id, record!inner(released_date)")
@@ -78,11 +73,6 @@ class SupabaseAllocationRepository(AllocationRepository):
         )
 
         if cursor:
-            try:
-                self.get_allocation_by_id(cursor)
-            except ValueError:
-                raise ValueError(f"Cursor with ID {cursor} not found.")
-
             response = (
                 self.client.table("allocation")
                 .select("id, record!inner(released_date)")

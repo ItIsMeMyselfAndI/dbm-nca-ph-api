@@ -5,12 +5,8 @@ from src.core.entities.record import Record
 
 
 class RecordRepository(Protocol):
-    def get_record_by_id(self, id: str) -> Record:
+    def get_record_by_id(self, id: str) -> Record | None:
         """Get a record by its ID."""
-        ...
-
-    def get_record_by_nca_number(self, nca_number: str) -> Record:
-        """Get a record by its NCA number."""
         ...
 
     def list_records(self, limit: int, cursor: str | None = None) -> List[Record]:

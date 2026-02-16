@@ -25,7 +25,7 @@ def test_record():
 
 def test_record_missing_fields():
     with pytest.raises(ValueError) as exc_info:
-        record = Record(  # pyright: ignore
+        Record(  # pyright: ignore
             id="2",
             nca_number="NCA-124",
             nca_type="Type B",
@@ -38,7 +38,7 @@ def test_record_missing_fields():
 
 def test_record_non_string_id():
     with pytest.raises(ValueError) as exc_info:
-        record = Record(
+        Record(
             id=2,  # pyright: ignore
             nca_number="NCA-125",
             nca_type="Type C",
@@ -52,7 +52,7 @@ def test_record_non_string_id():
 
 def test_record_non_string_nca_number():
     with pytest.raises(ValueError) as exc_info:
-        record = Record(
+        Record(
             id="3",
             nca_number=125,  # pyright: ignore
             nca_type="Type D",
@@ -66,7 +66,7 @@ def test_record_non_string_nca_number():
 
 def test_record_non_string_nca_type():
     with pytest.raises(ValueError) as exc_info:
-        record = Record(
+        Record(
             id="8",
             nca_number="NCA-130",
             nca_type=789,  # pyright: ignore
@@ -80,7 +80,7 @@ def test_record_non_string_nca_type():
 
 def test_record_non_string_released_date():
     with pytest.raises(ValueError) as exc_info:
-        record = Record(
+        Record(
             id="5",
             nca_number="NCA-127",
             nca_type="Type F",
@@ -94,7 +94,7 @@ def test_record_non_string_released_date():
 
 def test_record_non_string_department():
     with pytest.raises(ValueError) as exc_info:
-        record = Record(
+        Record(
             id="6",
             nca_number="NCA-128",
             nca_type="Type G",
@@ -108,7 +108,7 @@ def test_record_non_string_department():
 
 def test_record_non_string_purpose():
     with pytest.raises(ValueError) as exc_info:
-        record = Record(
+        Record(
             id="7",
             nca_number="NCA-129",
             nca_type="Type H",
@@ -122,7 +122,7 @@ def test_record_non_string_purpose():
 
 def test_record_non_string_release_id():
     with pytest.raises(ValueError) as exc_info:
-        record = Record(
+        Record(
             id="4",
             nca_number="NCA-126",
             nca_type="Type E",

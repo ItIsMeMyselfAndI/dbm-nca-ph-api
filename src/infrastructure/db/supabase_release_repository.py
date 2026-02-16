@@ -9,11 +9,11 @@ class SupabaseReleaseRepository(ReleaseRepository):
     def __init__(self):
         self.client = client
 
-    def get_release_by_id(self, id: str) -> Release:
+    def get_release_by_id(self, id: str) -> Release | None:
         response = self.client.table("release").select("*").eq("id", id).execute()
         data = response.model_dump().get("data", None)
         if not data:
-            raise ValueError(f"Release with ID {id} not found.")
+            return None
 
         release = Release(**data[0])
         return release
@@ -22,11 +22,6 @@ class SupabaseReleaseRepository(ReleaseRepository):
         query = self.client.table("release").select("*")
 
         if cursor is not None:
-            try:
-                self.get_release_by_id(cursor)
-            except ValueError:
-                raise ValueError(f"Cursor with ID {cursor} not found.")
-
             query = query.gt("id", cursor)
         query = query.order("id", desc=False).limit(limit)
 

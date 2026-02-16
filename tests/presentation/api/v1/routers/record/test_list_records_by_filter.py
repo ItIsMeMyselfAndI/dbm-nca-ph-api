@@ -48,15 +48,7 @@ def test_list_records_by_filter_with_empty_cursor(client):
     response = client.get(
         "/records/department/Department of Health (DOH)?limit=5&cursor="
     )
-    assert response.status_code == 200
-    data = response.json()
-    assert "items" in data
-    assert data["count"] == 5
-    assert data["cursor"] == ""
-    assert data["next_cursor"] is not None
-    assert len(data["items"]) == 5
-    for record in data["items"]:
-        assert record["department"] == "Department of Health (DOH)"
+    assert response.status_code == 404
 
 
 def test_list_records_by_filter_with_leading_trailing_spaces_cursor(client):

@@ -3,7 +3,7 @@ import pytest
 
 @pytest.fixture
 def repo():
-    from tests.infrastructure.db.allocation.mock_allocation_repository import (
+    from tests.mock.repositories.mock_allocation_repository import (
         MockAllocationRepository,
     )
 
