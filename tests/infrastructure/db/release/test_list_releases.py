@@ -3,7 +3,7 @@ import pytest
 
 @pytest.fixture
 def repo():
-    from tests.infrastructure.db.mock_release_repository import (
+    from tests.infrastructure.db.release.mock_release_repository import (
         MockReleaseRepository,
     )
 
@@ -39,15 +39,13 @@ def test_list_releases_with_invalid_cursor(repo):
 
 
 def test_list_releases_with_empty_cursor(repo):
-    with pytest.raises(ValueError) as exc_info:
-        repo.list_releases(limit=2, cursor="")
-    assert str(exc_info.value) == "Cursor with ID  not found."
+    releases = repo.list_releases(limit=2, cursor="")
+    assert len(releases) == 2
 
 
 def test_list_releases_with_none_cursor(repo):
-    with pytest.raises(ValueError) as exc_info:
-        repo.list_releases(limit=2, cursor=None)
-    assert str(exc_info.value) == "Cursor with ID None not found."
+    releases = repo.list_releases(limit=2, cursor=None)
+    assert len(releases) == 2
 
 
 def test_list_releases_with_leading_trailing_spaces_cursor(repo):
@@ -73,6 +71,5 @@ def test_list_releases_with_limit_exceeding_total(repo):
 
 
 def test_list_releases_with_negative_limit(repo):
-    with pytest.raises(ValueError) as exc_info:
-        repo.list_releases(limit=-5)
-    assert str(exc_info.value) == "Limit must be a non-negative integer."
+    releases = repo.list_releases(limit=-5)
+    assert len(releases) == 0

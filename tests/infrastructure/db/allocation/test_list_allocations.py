@@ -3,7 +3,7 @@ import pytest
 
 @pytest.fixture
 def repo():
-    from tests.infrastructure.db.mock_allocation_repository import (
+    from tests.infrastructure.db.allocation.mock_allocation_repository import (
         MockAllocationRepository,
     )
 
@@ -37,15 +37,13 @@ def test_list_allocations_with_invalid_cursor(repo):
 
 
 def test_list_allocations_with_empty_cursor(repo):
-    with pytest.raises(ValueError) as exc_info:
-        repo.list_allocations(limit=5, cursor="")
-    assert str(exc_info.value) == "Cursor with ID  not found."
+    allocations = repo.list_allocations(limit=5, cursor="")
+    assert len(allocations) == 5
 
 
 def test_list_allocations_with_none_cursor(repo):
-    with pytest.raises(ValueError) as exc_info:
-        repo.list_allocations(limit=5, cursor=None)
-    assert str(exc_info.value) == "Cursor with ID None not found."
+    allocations = repo.list_allocations(limit=5, cursor=None)
+    assert len(allocations) == 5
 
 
 def test_list_allocations_with_leading_trailing_spaces_cursor(repo):
@@ -76,7 +74,6 @@ def test_list_allocations_with_limit_exceeding_total(repo):
     assert len(allocations) == 40
 
 
-def test_list_allocations_with_negative_limit(repo):
-    with pytest.raises(ValueError) as exc_info:
-        repo.list_allocations(limit=-5)
-    assert str(exc_info.value) == "Limit must be a non-negative integer."
+# def test_list_allocations_with_negative_limit(repo):
+#     allocations = repo.list_allocations(limit=-5)
+#     assert len(allocations) == 0

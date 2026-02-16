@@ -10,6 +10,9 @@ class ListRecords:
     def execute(
         self, limit: int, cursor: str | None = None
     ) -> Tuple[List[Record], str | None]:
+        if limit <= 0:
+            return [], None
+
         records = self.record_repository.list_records(limit, cursor)
         if len(records) < limit:
             next_cursor = None

@@ -11,6 +11,9 @@ class ListAllocations:
     def execute(
         self, limit: int, cursor: str | None = None
     ) -> Tuple[List[Allocation], str | None]:
+        if limit <= 0:
+            return [], None
+
         allocations = self.allocation_repository.list_allocations(limit, cursor)
         if len(allocations) < limit:
             next_cursor = None

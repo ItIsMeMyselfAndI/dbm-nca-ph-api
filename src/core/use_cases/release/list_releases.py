@@ -10,6 +10,9 @@ class ListReleases:
     def execute(
         self, limit: int, cursor: str | None = None
     ) -> Tuple[List[Release], str | None]:
+        if limit <= 0:
+            return [], None
+
         releases = self.release_repository.list_releases(limit, cursor)
         if len(releases) < limit:
             next_cursor = None

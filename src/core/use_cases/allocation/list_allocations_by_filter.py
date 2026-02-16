@@ -12,6 +12,9 @@ class ListAllocationsByFilter:
     def execute(
         self, limit: int, filter: Dict[AllocationFilter, str], cursor: str | None = None
     ) -> Tuple[List[Allocation], str | None]:
+        if limit <= 0:
+            return [], None
+
         allocations = self.allocation_repository.list_allocations_by_filter(
             limit, filter, cursor
         )
