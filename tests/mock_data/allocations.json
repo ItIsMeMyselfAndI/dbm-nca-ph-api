@@ -1,0 +1,282 @@
+[
+  {
+    "id": "00002e59-c77c-46b3-8068-f49e33f3674c",
+    "nca_number": "NCA-ROIVB-25-0000114",
+    "agency": "",
+    "operating_unit": "Coron School of Fisheries",
+    "amount": 13209000
+  },
+  {
+    "id": "0000bd94-c025-465d-87f2-863f2b8c06bd",
+    "nca_number": "NCA-ROV-24-0012627",
+    "agency": "",
+    "operating_unit": "Baao National High School",
+    "amount": 2874000
+  },
+  {
+    "id": "0000df38-e99c-4c5e-9be5-606dbb369cf4",
+    "nca_number": "NCA-ROIII-24-0011227",
+    "agency": "",
+    "operating_unit": "Pamibian Integrated School",
+    "amount": 600872
+  },
+  {
+    "id": "0003112a-1546-447a-be07-7b0283802f16",
+    "nca_number": "NCA-BMB-D-24-0005711",
+    "agency": "Philippine Army ( Land Forces )",
+    "operating_unit": "",
+    "amount": 164365105
+  },
+  {
+    "id": "000414e9-27ba-4594-8c12-9a5517db415c",
+    "nca_number": "NCA-ROIVB-25-0007376",
+    "agency": "Office of the Secretary",
+    "operating_unit": "Sta. Fe National High School (Guinbirayan National High School - Sta. Fe Extension)",
+    "amount": 297882
+  },
+  {
+    "id": "00043fd2-c4dd-4890-8a55-63db6fce0eb6",
+    "nca_number": "NCA-BMB-C-24-0001101",
+    "agency": "Light Rail Transit Authority",
+    "operating_unit": "",
+    "amount": 216099000
+  },
+  {
+    "id": "0004483d-42b7-4133-b0a6-bf5744a9d706",
+    "nca_number": "NCA-BMB-C-24-0008601",
+    "agency": "",
+    "operating_unit": "Regional Office - CAR",
+    "amount": 6006000
+  },
+  {
+    "id": "0005e7a2-2e50-4f8c-a806-461d044fad92",
+    "nca_number": "NCA-ROIII-25-0006347",
+    "agency": "Office of the Secretary",
+    "operating_unit": "Pampanga 2nd District Engineering Office",
+    "amount": 35000
+  },
+  {
+    "id": "0006d872-a49d-45a3-8b5b-4c4ad9d5a10d",
+    "nca_number": "NCA-ROII-24-0012401",
+    "agency": "Office of the Secretary",
+    "operating_unit": "Regional Office - II",
+    "amount": 4005900
+  },
+  {
+    "id": "00074d98-e186-40d7-ab33-ae1a043e44ba",
+    "nca_number": "NCA-BMB-E-24-0016599",
+    "agency": "Bureau of Fisheries and Aquatic Resources",
+    "operating_unit": "Regional Office - VIII",
+    "amount": 131000
+  },
+  {
+    "id": "000757d4-d9b1-4667-910e-837cb0d5ade8",
+    "nca_number": "NCA-ROVI-24-0002593",
+    "agency": "",
+    "operating_unit": "Quirico G. Manzano Memorial National High School (Caningay National High School - Candoni Extension)",
+    "amount": 6397000
+  },
+  {
+    "id": "0008539e-1556-43f9-821c-62068d1e6494",
+    "nca_number": "NCA-ROVII-24-0017437",
+    "agency": "Office of the Secretary",
+    "operating_unit": "Dumaguete City Science High School",
+    "amount": 77209
+  },
+  {
+    "id": "00091aef-a2bb-4f5d-ae4e-f8f34ab39919",
+    "nca_number": "NCA-ROIVA-24-0007580",
+    "agency": "",
+    "operating_unit": "Wenceslao Trinidad Memorial National High School",
+    "amount": 40294000
+  },
+  {
+    "id": "00094279-aca8-4f30-b119-6334169aa3ae",
+    "nca_number": "NCA-ROI-24-0002736",
+    "agency": "",
+    "operating_unit": "Division of Vigan City",
+    "amount": 90489000
+  },
+  {
+    "id": "00094cff-8b64-42cc-ad94-bb07545d3cde",
+    "nca_number": "NCA-ROIVB-25-0008014",
+    "agency": "",
+    "operating_unit": "Lubang Integrated School",
+    "amount": 434000
+  },
+  {
+    "id": "000a5246-3d92-44c2-ba71-06ccd1300505",
+    "nca_number": "NCA-ROIVB-24-0007665",
+    "agency": "",
+    "operating_unit": "Bognuyan National High School",
+    "amount": 13802000
+  },
+  {
+    "id": "000b9deb-d0e6-464f-92eb-b873c7711afa",
+    "nca_number": "NCA-ROV-24-0010630",
+    "agency": "",
+    "operating_unit": "Pandan School of Arts and Trades",
+    "amount": 1307705
+  },
+  {
+    "id": "000cdcd1-ea13-446c-ba78-a29ad7fe23a7",
+    "nca_number": "NCA-ROVIII-25-0003754",
+    "agency": "",
+    "operating_unit": "Sulat National High School",
+    "amount": 12593000
+  },
+  {
+    "id": "000e170c-0032-460d-bfce-d285da243336",
+    "nca_number": "NCA-ROV-25-0008756",
+    "agency": "",
+    "operating_unit": "Pioduran National High School",
+    "amount": 159887
+  },
+  {
+    "id": "000e3dda-b67a-449a-8c5e-aba0cd459923",
+    "nca_number": "NCA-ROVI-25-0002955",
+    "agency": "Office of the Secretary",
+    "operating_unit": "Division of Antique",
+    "amount": 641691
+  },
+  {
+    "id": "000e50d5-6d67-4c8c-82ee-d1e7ee965fa6",
+    "nca_number": "NCA-ROIVA-25-0004248",
+    "agency": "",
+    "operating_unit": "Southville I Integrated National High School",
+    "amount": 3036000
+  },
+  {
+    "id": "000f45f7-6265-4776-9702-e99debe7314c",
+    "nca_number": "NCA-ROVI-24-0000521",
+    "agency": "",
+    "operating_unit": "Lopez Jaena National High School",
+    "amount": 10491000
+  },
+  {
+    "id": "000f8844-0b12-4d0d-950b-ba83cf951da4",
+    "nca_number": "NCA-NCR-24-0000075",
+    "agency": "",
+    "operating_unit": "Bagong Barrio National High School",
+    "amount": 17150000
+  },
+  {
+    "id": "001005dc-61e8-4789-bb9b-f23b341d7f0f",
+    "nca_number": "NCA-BMB-C-24-0004060",
+    "agency": "",
+    "operating_unit": "Regional Office - I",
+    "amount": 11743000
+  },
+  {
+    "id": "00104e7a-7e3f-4dd1-bf73-66204c6c303a",
+    "nca_number": "NCA-ROX-25-0016762",
+    "agency": "Office of the Secretary",
+    "operating_unit": "Bunawan Agricultural High School",
+    "amount": 177736
+  },
+  {
+    "id": "00114ada-211c-4c11-9486-be9f8f009e74",
+    "nca_number": "NCA-CAR-24-0008839",
+    "agency": "Office of the Secretary",
+    "operating_unit": "Benguet National High School",
+    "amount": 112650
+  },
+  {
+    "id": "0014447d-b6d0-4a99-b852-ed83c932132a",
+    "nca_number": "NCA-ROX-25-0004648",
+    "agency": "Office of the Secretary",
+    "operating_unit": "Iligan City National High School",
+    "amount": 109559000
+  },
+  {
+    "id": "0015dbf7-593e-4383-b52d-2e54fbc959db",
+    "nca_number": "NCA-BMB-B-25-0008631",
+    "agency": "National Authority for Child Care",
+    "operating_unit": "",
+    "amount": 1654550
+  },
+  {
+    "id": "001626df-06a8-4b38-ae93-eadad97e2258",
+    "nca_number": "NCA-BMB-F-24-0008808",
+    "agency": "",
+    "operating_unit": "CARAGA Region Campus",
+    "amount": 61634000
+  },
+  {
+    "id": "0017acfb-195e-44f4-bf51-ae6c8d34536a",
+    "nca_number": "NCA-ROX-25-0004346",
+    "agency": "Office of the Secretary",
+    "operating_unit": "Tomas Cabili National High School",
+    "amount": 22753000
+  },
+  {
+    "id": "0017fa4e-be27-474c-9331-c04243ecca64",
+    "nca_number": "NCA-ROV-24-0001964",
+    "agency": "",
+    "operating_unit": "Macalaya National High School",
+    "amount": 10000
+  },
+  {
+    "id": "0019abfd-1f28-402c-89e0-58f2bed3d0d0",
+    "nca_number": "NCA-ROVII-24-0012582",
+    "agency": "",
+    "operating_unit": "Talamban National High School",
+    "amount": 2991000
+  },
+  {
+    "id": "0019d307-0b41-461d-86f5-01e70d4c7c1c",
+    "nca_number": "NCA-ROI-25-0013139",
+    "agency": "",
+    "operating_unit": "Macarang National High School",
+    "amount": 820000
+  },
+  {
+    "id": "001a2bb9-ccce-4381-9919-06659117de16",
+    "nca_number": "NCA-NCR-24-0006546",
+    "agency": "Office of the Secretary",
+    "operating_unit": "Parañaque National High School (Main)",
+    "amount": 5754580
+  },
+  {
+    "id": "001ac545-efd7-4054-ba67-732f81de7f23",
+    "nca_number": "NCA-BMB-C-24-0017283",
+    "agency": "News and Information Bureau",
+    "operating_unit": "",
+    "amount": 4639593
+  },
+  {
+    "id": "001ac74b-ae28-4820-a375-06f94891748c",
+    "nca_number": "NCA-ROXI-25-0006066",
+    "agency": "Office of the Secretary",
+    "operating_unit": "Division of Mati City",
+    "amount": 26462000
+  },
+  {
+    "id": "001c4af5-f424-42d5-96bc-6d882eac7651",
+    "nca_number": "NCA-ROIII-24-0011388",
+    "agency": "",
+    "operating_unit": "Amucao National High School",
+    "amount": 660428
+  },
+  {
+    "id": "001c8d67-c998-457c-848a-efc9e075ae9b",
+    "nca_number": "NCA-ROIII-24-0003181",
+    "agency": "",
+    "operating_unit": "Aringin National High School",
+    "amount": 4397000
+  },
+  {
+    "id": "001ccae7-7911-45d9-b25c-19644d6d3382",
+    "nca_number": "NCA-ROIX-25-0011990",
+    "agency": "Sulu State College",
+    "operating_unit": "",
+    "amount": 59737000
+  },
+  {
+    "id": "001d0d7b-a5da-4c68-94a9-d210751cff0e",
+    "nca_number": "NCA-BMB-A-24-0011277",
+    "agency": "Civil Aeronautics Board",
+    "operating_unit": "",
+    "amount": 2266443
+  }
+]

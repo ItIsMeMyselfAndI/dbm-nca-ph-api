@@ -2,7 +2,6 @@ from typing import Dict, List
 
 from src.core.entities.allocation_filter import AllocationFilter
 from src.core.entities.allocation import Allocation
-from src.core.entities.record import Record
 from src.core.interfaces.allocation_repository import AllocationRepository
 from src.infrastructure.db.supabase_client import client
 

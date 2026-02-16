@@ -1,0 +1,362 @@
+[
+  {
+    "id": "91e80926-ea6a-48d1-bb63-875b4924ecec",
+    "nca_number": "NCA-ROIX-24-0000001",
+    "nca_type": "REG",
+    "released_date": "2024-01-02T07:10:16+00:00",
+    "department": "Department of Health (DOH)",
+    "purpose": "To cover the regular operating and RLIP requirements for the first quarter (January to March 2024)",
+    "release_id": "id_2024"
+  },
+  {
+    "id": "b8cc5f46-5f64-4190-ab0b-38b640bba289",
+    "nca_number": "NCA-ROIX-24-0000002",
+    "nca_type": "REG",
+    "released_date": "2024-01-02T07:10:16+00:00",
+    "department": "State Universities and Colleges (SUCs)",
+    "purpose": "To cover the regular operating and RLIP requirements for the first quarter (January to March 2024)",
+    "release_id": "id_2024"
+  },
+  {
+    "id": "58996e45-171b-4a6c-9ba0-ebf1e0507a46",
+    "nca_number": "NCA-ROIX-24-0000004",
+    "nca_type": "REG",
+    "released_date": "2024-01-02T07:10:18+00:00",
+    "department": "Department of Public Works and Highways (DPWH)",
+    "purpose": "To cover the regular operating and RLIP requirements for the first quarter (January to March 2024)",
+    "release_id": "id_2024"
+  },
+  {
+    "id": "ead854fe-7ecb-46cb-8933-bb2fdbe8ebdd",
+    "nca_number": "NCA-ROIX-24-0000005",
+    "nca_type": "REG",
+    "released_date": "2024-01-02T07:10:18+00:00",
+    "department": "Department of Labor and Employment (DOLE)",
+    "purpose": "To cover the regular operating and RLIP requirements for the first quarter (January to March 2024)",
+    "release_id": "id_2024"
+  },
+  {
+    "id": "b5b4c6de-f519-4ca0-93b4-bd6eecf91238",
+    "nca_number": "NCA-ROIX-24-0000006",
+    "nca_type": "REG",
+    "released_date": "2024-01-02T07:10:19+00:00",
+    "department": "Department of Education (DepEd)",
+    "purpose": "To cover the regular operating and RLIP requirements for the first quarter (January to March 2024)",
+    "release_id": "id_2024"
+  },
+  {
+    "id": "f21bf45a-8791-4eb1-ae56-5c4f41875b3d",
+    "nca_number": "NCA-ROIX-24-0000009",
+    "nca_type": "REG",
+    "released_date": "2024-01-02T07:10:21+00:00",
+    "department": "Department of Public Works and Highways (DPWH)",
+    "purpose": "To cover the regular operating and RLIP requirements for the first quarter (January to March 2024)",
+    "release_id": "id_2024"
+  },
+  {
+    "id": "acb7d018-a8f7-4d79-978c-db068cff9249",
+    "nca_number": "NCA-ROIX-24-0000011",
+    "nca_type": "REG",
+    "released_date": "2024-01-02T07:10:22+00:00",
+    "department": "State Universities and Colleges (SUCs)",
+    "purpose": "To cover the regular operating and RLIP requirements for the first quarter (January to March 2024)",
+    "release_id": "id_2024"
+  },
+  {
+    "id": "115b9089-3c40-44b9-a0e6-654ca4846276",
+    "nca_number": "NCA-ROIX-24-0000012",
+    "nca_type": "REG",
+    "released_date": "2024-01-02T07:10:23+00:00",
+    "department": "State Universities and Colleges (SUCs)",
+    "purpose": "To cover the regular operating and RLIP requirements for the first quarter (January to March 2024)",
+    "release_id": "id_2024"
+  },
+  {
+    "id": "081c97c6-78ee-48a1-95cd-691fbd9e55fc",
+    "nca_number": "NCA-ROIX-24-0000013",
+    "nca_type": "REG",
+    "released_date": "2024-01-02T07:10:24+00:00",
+    "department": "Department of Health (DOH)",
+    "purpose": "To cover the regular operating and RLIP requirements for the first quarter (January to March 2024)",
+    "release_id": "id_2024"
+  },
+  {
+    "id": "bedb0444-3196-49d3-a1f1-9809cfdfdf24",
+    "nca_number": "NCA-ROIX-24-0000014",
+    "nca_type": "REG",
+    "released_date": "2024-01-02T07:10:24+00:00",
+    "department": "Other Executive Offices (OEOs)",
+    "purpose": "To cover the regular operating and RLIP requirements for the first quarter (January to March 2024)",
+    "release_id": "id_2024"
+  },
+  {
+    "id": "2d1c9243-ab42-425f-b23a-fc4e6bccffcb",
+    "nca_number": "NCA-ROIX-24-0000015",
+    "nca_type": "REG",
+    "released_date": "2024-01-02T07:10:25+00:00",
+    "department": "Department of Public Works and Highways (DPWH)",
+    "purpose": "To cover the regular operating and RLIP requirements for the first quarter (January to March 2024)",
+    "release_id": "id_2024"
+  },
+  {
+    "id": "6ba1ca81-3bf4-47f5-9b70-374c1e09bfcb",
+    "nca_number": "NCA-ROIX-24-0000016",
+    "nca_type": "REG",
+    "released_date": "2024-01-02T07:10:26+00:00",
+    "department": "State Universities and Colleges (SUCs)",
+    "purpose": "To cover the regular operating and RLIP requirements for the first quarter (January to March 2024)",
+    "release_id": "id_2024"
+  },
+  {
+    "id": "c12d21f8-f72a-4842-93ef-c0f319c9ce16",
+    "nca_number": "NCA-ROIX-24-0000017",
+    "nca_type": "REG",
+    "released_date": "2024-01-02T07:10:26+00:00",
+    "department": "Department of Health (DOH)",
+    "purpose": "To cover the regular operating and RLIP requirements for the first quarter (January to March 2024)",
+    "release_id": "id_2024"
+  },
+  {
+    "id": "2e318cc4-b171-4c0d-ab3f-e6c103116cf5",
+    "nca_number": "NCA-ROIX-24-0000019",
+    "nca_type": "REG",
+    "released_date": "2024-01-02T07:10:28+00:00",
+    "department": "Department of Education (DepEd)",
+    "purpose": "To cover the regular operating and RLIP requirements for the first quarter (January to March 2024)",
+    "release_id": "id_2024"
+  },
+  {
+    "id": "039b56c4-18db-4fe4-83fe-a7318feb88d9",
+    "nca_number": "NCA-ROIX-24-0000022",
+    "nca_type": "REG",
+    "released_date": "2024-01-02T07:11:47+00:00",
+    "department": "State Universities and Colleges (SUCs)",
+    "purpose": "To cover the regular operating and RLIP requirements for the first quarter (January to March 2024)",
+    "release_id": "id_2024"
+  },
+  {
+    "id": "bbaa2604-d011-4e3f-bd01-4c030e835770",
+    "nca_number": "NCA-ROIX-24-0000023",
+    "nca_type": "REG",
+    "released_date": "2024-01-02T07:11:48+00:00",
+    "department": "Department of Education (DepEd)",
+    "purpose": "To cover the regular operating and RLIP requirements for the first quarter (January to March 2024)",
+    "release_id": "id_2024"
+  },
+  {
+    "id": "bba7ab74-18fd-4cc8-8b90-079bbafa2a62",
+    "nca_number": "NCA-ROIX-24-0000024",
+    "nca_type": "REG",
+    "released_date": "2024-01-02T07:11:49+00:00",
+    "department": "Department of Education (DepEd)",
+    "purpose": "To cover the regular operating and RLIP requirements for the first quarter (January to March 2024)",
+    "release_id": "id_2024"
+  },
+  {
+    "id": "349b01a9-80a0-4439-b25e-ad66fdd9820e",
+    "nca_number": "NCA-ROIX-24-0000028",
+    "nca_type": "REG",
+    "released_date": "2024-01-02T07:11:52+00:00",
+    "department": "Department of Education (DepEd)",
+    "purpose": "To cover the regular operating and RLIP requirements for the first quarter (January to March 2024)",
+    "release_id": "id_2024"
+  },
+  {
+    "id": "fa7d058f-4912-4845-acbb-147f7d010455",
+    "nca_number": "NCA-ROIX-24-0000030",
+    "nca_type": "REG",
+    "released_date": "2024-01-02T07:11:53+00:00",
+    "department": "Department of Public Works and Highways (DPWH)",
+    "purpose": "To cover the regular operating and RLIP requirements for the first quarter (January to March 2024)",
+    "release_id": "id_2024"
+  },
+  {
+    "id": "ae3cc064-9a74-44b4-b120-e122ac1d4e92",
+    "nca_number": "NCA-ROIX-24-0000033",
+    "nca_type": "REG",
+    "released_date": "2024-01-02T07:11:55+00:00",
+    "department": "State Universities and Colleges (SUCs)",
+    "purpose": "To cover the regular operating and RLIP requirements for the first quarter (January to March 2024)",
+    "release_id": "id_2024"
+  },
+  {
+    "id": "1ab0dc43-a9c2-42ca-a8b7-b460f2c23ce2",
+    "nca_number": "NCA-ROIX-24-0000035",
+    "nca_type": "REG",
+    "released_date": "2024-01-02T07:11:56+00:00",
+    "department": "Department of Health (DOH)",
+    "purpose": "To cover the regular operating and RLIP requirements for the first quarter (January to March 2024)",
+    "release_id": "id_2024"
+  },
+  {
+    "id": "ce276aa0-a015-4c1e-9d49-20591c4dbe67",
+    "nca_number": "NCA-ROIX-24-0000034",
+    "nca_type": "REG",
+    "released_date": "2024-01-02T07:11:56+00:00",
+    "department": "Department of Labor and Employment (DOLE)",
+    "purpose": "To cover the regular operating and RLIP requirements for the first quarter (January to March 2024)",
+    "release_id": "id_2024"
+  },
+  {
+    "id": "01a0d9a2-0c1a-425d-beb8-08db050e1d40",
+    "nca_number": "NCA-ROIX-24-0000038",
+    "nca_type": "REG",
+    "released_date": "2024-01-02T07:11:58+00:00",
+    "department": "Department of Education (DepEd)",
+    "purpose": "To cover the regular operating and RLIP requirements for the first quarter (January to March 2024)",
+    "release_id": "id_2024"
+  },
+  {
+    "id": "f53757e6-6908-4fad-a00b-194c2c8e3ce3",
+    "nca_number": "NCA-ROIX-24-0000037",
+    "nca_type": "REG",
+    "released_date": "2024-01-02T07:11:58+00:00",
+    "department": "Department of Health (DOH)",
+    "purpose": "To cover the regular operating and RLIP requirements for the first quarter (January to March 2024)",
+    "release_id": "id_2024"
+  },
+  {
+    "id": "ef95e253-3af4-4e6f-8829-edb40bd9abcb",
+    "nca_number": "NCA-ROIX-24-0000039",
+    "nca_type": "REG",
+    "released_date": "2024-01-02T07:11:59+00:00",
+    "department": "Department of Public Works and Highways (DPWH)",
+    "purpose": "To cover the regular operating and RLIP requirements for the first quarter (January to March 2024)",
+    "release_id": "id_2024"
+  },
+  {
+    "id": "926c57ee-fd96-4774-bb4a-bced79dec085",
+    "nca_number": "NCA-ROIX-24-0000040",
+    "nca_type": "REG",
+    "released_date": "2024-01-02T07:12:00+00:00",
+    "department": "Department of Health (DOH)",
+    "purpose": "To cover the regular operating and RLIP requirements for the first quarter (January to March 2024)",
+    "release_id": "id_2024"
+  },
+  {
+    "id": "75dc1bfd-3b45-4e04-92bd-b4f548a52b61",
+    "nca_number": "NCA-ROIX-24-0000043",
+    "nca_type": "REG",
+    "released_date": "2024-01-02T07:12:25+00:00",
+    "department": "Department of Public Works and Highways (DPWH)",
+    "purpose": "To cover the regular operating and RLIP requirements for the first quarter (January to March 2024)",
+    "release_id": "id_2024"
+  },
+  {
+    "id": "87bf7bb1-8e8b-4d03-b530-1f04bf6446dd",
+    "nca_number": "NCA-ROIX-24-0000046",
+    "nca_type": "REG",
+    "released_date": "2024-01-02T07:12:27+00:00",
+    "department": "Department of Education (DepEd)",
+    "purpose": "To cover the regular operating and RLIP requirements for the first quarter (January to March 2024)",
+    "release_id": "id_2024"
+  },
+  {
+    "id": "04e95ccf-119c-4ba8-91f2-5ae292e10a79",
+    "nca_number": "NCA-ROIVA-24-0000047",
+    "nca_type": "REG",
+    "released_date": "2024-01-02T07:20:19+00:00",
+    "department": "Department of Education (DepEd)",
+    "purpose": "To cover the regular operating and RLIP requirements for the first quarter (January to March 2024).",
+    "release_id": "id_2024"
+  },
+  {
+    "id": "28ff843d-6ac3-45fd-a079-e0954b0dcac5",
+    "nca_number": "NCA-ROIVA-24-0000048",
+    "nca_type": "REG",
+    "released_date": "2024-01-02T07:24:51+00:00",
+    "department": "Department of Education (DepEd)",
+    "purpose": "To cover the regular operating and RLIP requirements for the first quarter (January to March 2024).",
+    "release_id": "id_2024"
+  },
+  {
+    "id": "b04d1922-edba-4169-a3f0-2cea425058ed",
+    "nca_number": "NCA-ROIVA-24-0000049",
+    "nca_type": "REG",
+    "released_date": "2024-01-02T07:26:04+00:00",
+    "department": "Department of Education (DepEd)",
+    "purpose": "To cover the regular operating and RLIP requirements for the first quarter (January to March 2024).",
+    "release_id": "id_2024"
+  },
+  {
+    "id": "fdea32b9-ca33-41ff-8b1e-4e04c04d8866",
+    "nca_number": "NCA-ROIVA-24-0000050",
+    "nca_type": "REG",
+    "released_date": "2024-01-02T07:28:51+00:00",
+    "department": "Department of Education (DepEd)",
+    "purpose": "To cover the regular operating and RLIP requirements for the first quarter (January to March 2024).",
+    "release_id": "id_2024"
+  },
+  {
+    "id": "996087b5-4d84-4d70-8f6c-b48f614c7ad2",
+    "nca_number": "NCA-ROIVA-24-0000051",
+    "nca_type": "REG",
+    "released_date": "2024-01-02T07:29:57+00:00",
+    "department": "Department of Education (DepEd)",
+    "purpose": "To cover the regular operating and RLIP requirements for the first quarter (January to March 2024).",
+    "release_id": "id_2024"
+  },
+  {
+    "id": "b6440d64-5f84-470a-bd03-4d09de691854",
+    "nca_number": "NCA-ROIVA-24-0000052",
+    "nca_type": "REG",
+    "released_date": "2024-01-02T07:31:22+00:00",
+    "department": "Department of Education (DepEd)",
+    "purpose": "To cover the regular operating and RLIP requirements for the first quarter (January to March 2024).",
+    "release_id": "id_2024"
+  },
+  {
+    "id": "7171a8c9-4aef-4ef1-b857-cf5a4cedee8b",
+    "nca_number": "NCA-ROIVA-24-0000053",
+    "nca_type": "REG",
+    "released_date": "2024-01-02T07:34:28+00:00",
+    "department": "Department of Education (DepEd)",
+    "purpose": "To cover the regular operating and RLIP requirements for the first quarter (January to March 2024).",
+    "release_id": "id_2024"
+  },
+  {
+    "id": "d8a05b06-c4a1-4a73-9458-62422b4511ac",
+    "nca_number": "NCA-ROIVA-24-0000054",
+    "nca_type": "REG",
+    "released_date": "2024-01-02T07:34:29+00:00",
+    "department": "Department of Education (DepEd)",
+    "purpose": "To cover the regular operating and RLIP requirements for the first quarter (January to March 2024).",
+    "release_id": "id_2024"
+  },
+  {
+    "id": "37887a84-e3a7-4a71-afed-3f1da037e421",
+    "nca_number": "NCA-NCR-24-0000055",
+    "nca_type": "REG",
+    "released_date": "2024-01-02T07:34:59+00:00",
+    "department": "State Universities and Colleges (SUCs)",
+    "purpose": "To cover the regular operating and RLIP requirements for the first quarter (January to March 2024).",
+    "release_id": "id_2024"
+  },
+  {
+    "id": "870b4ddf-fc86-494e-8431-a5b764be1b54",
+    "nca_number": "NCA-NCR-24-0000056",
+    "nca_type": "REG",
+    "released_date": "2024-01-02T07:34:59+00:00",
+    "department": "Other Executive Offices (OEOs)",
+    "purpose": "To cover the regular operating and RLIP requirements for the first quarter (January to March 2024).",
+    "release_id": "id_2024"
+  },
+  {
+    "id": "45f75f13-58b6-4944-b0ba-4653df6f471a",
+    "nca_number": "NCA-NCR-24-0000057",
+    "nca_type": "REG",
+    "released_date": "2024-01-02T07:35:55+00:00",
+    "department": "Department of Public Works and Highways (DPWH)",
+    "purpose": "To cover the regular operating and RLIP requirements for the first quarter (January to March 2024).",
+    "release_id": "id_2024"
+  },
+  {
+    "id": "01e4a42e-5d2f-4a56-9c3c-5400462c3c29",
+    "nca_number": "NCA-NCR-24-0000058",
+    "nca_type": "REG",
+    "released_date": "2024-01-02T07:35:56+00:00",
+    "department": "Allocations to Local Government Units (ALGU)",
+    "purpose": "To cover the regular operating and RLIP requirements for the first quarter (January to March 2024).",
+    "release_id": "id_2024"
+  }
+]
