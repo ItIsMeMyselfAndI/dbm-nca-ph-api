@@ -11,6 +11,7 @@ class SupabaseAllocationRepository(AllocationRepository):
         self.client = client
 
     def get_allocation_by_id(self, id: str) -> Allocation | None:
+        id = id.strip().lower()
         response = self.client.table("allocation").select("*").eq("id", id).execute()
         data = response.model_dump().get("data", None)
         if not data:
@@ -25,6 +26,7 @@ class SupabaseAllocationRepository(AllocationRepository):
         query = self.client.table("allocation").select("*, record!inner(released_date)")
 
         if cursor:
+            cursor = cursor.strip().lower()
             response = (
                 self.client.table("allocation")
                 .select("id, record!inner(released_date)")
@@ -73,6 +75,7 @@ class SupabaseAllocationRepository(AllocationRepository):
         )
 
         if cursor:
+            cursor = cursor.strip().lower()
             response = (
                 self.client.table("allocation")
                 .select("id, record!inner(released_date)")

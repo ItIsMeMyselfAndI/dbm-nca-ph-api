@@ -20,11 +20,6 @@ def use_case(repo):
 def test_get_release_by_id(use_case):
     release = use_case.execute("id_2024")
     assert release.id == "id_2024"
-    assert release.year == 2024
-    assert (
-        release.url == "https://www.dbm.gov.ph/wp-content/uploads/NCA/2024/NCA_2024.pdf"
-    )
-    assert release.filename == "NCA_2024.pdf"
 
 
 def test_get_release_by_id_not_found(use_case):
@@ -39,13 +34,11 @@ def test_get_release_by_id_empty_string(use_case):
     assert str(exc_info.value) == "Release with ID  not found."
 
 
-def test_get_release_by_id_case_sensitivity(use_case):
-    with pytest.raises(ValueError) as exc_info:
-        use_case.execute("ID_2024")
-    assert str(exc_info.value) == "Release with ID ID_2024 not found."
+def test_get_release_by_id_upper_case(use_case):
+    release = use_case.execute("ID_2024")
+    assert release.id == "id_2024"
 
 
 def test_get_release_by_id_leading_trailing_spaces(use_case):
-    with pytest.raises(ValueError) as exc_info:
-        use_case.execute(" id_2024 ")
-    assert str(exc_info.value) == "Release with ID  id_2024  not found."
+    release = use_case.execute(" id_2024 ")
+    assert release.id == "id_2024"

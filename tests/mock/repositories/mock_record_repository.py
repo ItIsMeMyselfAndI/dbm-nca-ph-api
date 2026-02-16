@@ -20,21 +20,17 @@ class MockRecordRepository(RecordRepository):
         return [Record(**item) for item in data]
 
     def get_record_by_id(self, id: str) -> Record:
+        id = id.strip().lower()
         record = next((r for r in self.records if r.id == id), None)
         if not record:
             raise ValueError(f"Record with ID {id} not found.")
-        return record
-
-    def get_record_by_nca_number(self, nca_number: str) -> Record:
-        record = next((r for r in self.records if r.nca_number == nca_number), None)
-        if not record:
-            raise ValueError(f"Record with NCA number {nca_number} not found.")
         return record
 
     def list_records(self, limit: int, cursor: str | None = None) -> List[Record]:
         records = self.records
         if cursor:
             try:
+                cursor = cursor.strip().lower()
                 cursor_index = next(i for i, r in enumerate(records) if r.id == cursor)
                 records = records[cursor_index + 1 :]
             except StopIteration:
@@ -51,6 +47,7 @@ class MockRecordRepository(RecordRepository):
 
         if cursor:
             try:
+                cursor = cursor.strip().lower()
                 cursor_index = next(i for i, r in enumerate(records) if r.id == cursor)
                 records = records[cursor_index + 1 :]
             except StopIteration:

@@ -58,35 +58,31 @@ def test_list_allocations_by_filter_with_empty_cursor(use_case):
     with pytest.raises(ValueError) as exc_info:
         filter = {AllocationFilter.OPERATING_UNIT: "Coron School of Fisheries"}
         use_case.execute(filter=filter, limit=5, cursor="")
-    assert str(exc_info.value) == "Cursor with ID  not found."
+    assert str(exc_info.value) == "Cursor cannot be an empty string."
 
 
 def test_list_allocations_by_filter_with_leading_trailing_spaces_cursor(use_case):
-    with pytest.raises(ValueError) as exc_info:
-        filter = {AllocationFilter.OPERATING_UNIT: "Coron School of Fisheries"}
-        use_case.execute(
-            filter=filter,
-            limit=5,
-            cursor=" 00002e59-c77c-46b3-8068-f49e33f3674c ",
-        )
-    assert (
-        str(exc_info.value)
-        == "Cursor with ID  00002e59-c77c-46b3-8068-f49e33f3674c  not found."
+    filter = {AllocationFilter.OPERATING_UNIT: "Coron School of Fisheries"}
+    allocations, next_cursor = use_case.execute(
+        filter=filter,
+        limit=5,
+        cursor=" 00002e59-c77c-46b3-8068-f49e33f3674c ",
     )
+    assert len(allocations) == 0
+    assert next_cursor is None
+    for allocation in allocations:
+        assert allocation.operating_unit == "Coron School of Fisheries"
 
 
-def test_list_allocations_by_filter_with_case_sensitivity_cursor(use_case):
-    with pytest.raises(ValueError) as exc_info:
-        filter = {AllocationFilter.OPERATING_UNIT: "Coron School of Fisheries"}
-        use_case.execute(
-            filter=filter,
-            limit=5,
-            cursor="00002E59-C77C-46B3-8068-F49E33F3674C",
-        )
-    assert (
-        str(exc_info.value)
-        == "Cursor with ID 00002E59-C77C-46B3-8068-F49E33F3674C not found."
+def test_list_allocations_by_filter_with_upper_case_cursor(use_case):
+    filter = {AllocationFilter.OPERATING_UNIT: "Coron School of Fisheries"}
+    allocations, next_cursor = use_case.execute(
+        filter=filter,
+        limit=5,
+        cursor="00002E59-C77C-46B3-8068-F49E33F3674C",
     )
+    assert len(allocations) == 0
+    assert next_cursor is None
 
 
 def test_list_allocations_by_filter_with_limit_zero(use_case):

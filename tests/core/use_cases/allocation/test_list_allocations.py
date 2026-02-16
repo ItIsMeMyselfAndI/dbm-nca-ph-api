@@ -42,25 +42,23 @@ def test_list_allocations_with_invalid_cursor(use_case):
 def test_list_allocations_with_empty_cursor(use_case):
     with pytest.raises(ValueError) as exc_info:
         use_case.execute(limit=5, cursor="")
-    assert str(exc_info.value) == "Cursor with ID  not found."
+    assert str(exc_info.value) == "Cursor cannot be an empty string."
 
 
 def test_list_allocations_with_leading_trailing_spaces_cursor(use_case):
-    with pytest.raises(ValueError) as exc_info:
-        use_case.execute(limit=5, cursor=" 00002e59-c77c-46b3-8068-f49e33f3674c ")
-    assert (
-        str(exc_info.value)
-        == "Cursor with ID  00002e59-c77c-46b3-8068-f49e33f3674c  not found."
+    allocations, next_cursor = use_case.execute(
+        limit=5, cursor=" 00002e59-c77c-46b3-8068-f49e33f3674c "
     )
+    assert len(allocations) == 5
+    assert next_cursor is not None
 
 
-def test_list_allocations_with_case_sensitivity_cursor(use_case):
-    with pytest.raises(ValueError) as exc_info:
-        use_case.execute(limit=5, cursor="00002E59-C77C-46B3-8068-F49E33F3674C")
-    assert (
-        str(exc_info.value)
-        == "Cursor with ID 00002E59-C77C-46B3-8068-F49E33F3674C not found."
+def test_list_allocations_with_upper_case_cursor(use_case):
+    allocations, next_cursor = use_case.execute(
+        limit=5, cursor="00002E59-C77C-46B3-8068-F49E33F3674C"
     )
+    assert len(allocations) == 5
+    assert next_cursor is not None
 
 
 def test_list_allocations_with_limit_zero(use_case):

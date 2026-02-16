@@ -19,6 +19,7 @@ class MockReleaseRepository(ReleaseRepository):
         return [Release(**item) for item in data]
 
     def get_release_by_id(self, id: str) -> Release:
+        id = id.strip().lower()
         release = next((r for r in self.releases if r.id == id), None)
         if not release:
             raise ValueError(f"Release with ID {id} not found.")
@@ -28,6 +29,7 @@ class MockReleaseRepository(ReleaseRepository):
         releases = self.releases
         if cursor:
             try:
+                cursor = cursor.strip().lower()
                 cursor_index = next(i for i, r in enumerate(releases) if r.id == cursor)
                 releases = releases[cursor_index + 1 :]
             except StopIteration:

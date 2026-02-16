@@ -42,19 +42,19 @@ def test_list_releases_with_invalid_cursor(use_case):
 def test_list_releases_with_empty_cursor(use_case):
     with pytest.raises(ValueError) as exc_info:
         use_case.execute(limit=2, cursor="")
-    assert str(exc_info.value) == "Cursor with ID  not found."
+    assert str(exc_info.value) == "Cursor cannot be an empty string."
 
 
 def test_list_releases_with_leading_trailing_spaces_cursor(use_case):
-    with pytest.raises(ValueError) as exc_info:
-        use_case.execute(limit=2, cursor=" id_2024 ")
-    assert str(exc_info.value) == "Cursor with ID  id_2024  not found."
+    releases, next_cursor = use_case.execute(limit=2, cursor=" id_2024 ")
+    assert len(releases) == 2
+    assert next_cursor is not None
 
 
-def test_list_releases_with_case_sensitivity_cursor(use_case):
-    with pytest.raises(ValueError) as exc_info:
-        use_case.execute(limit=2, cursor="ID_2024")
-    assert str(exc_info.value) == "Cursor with ID ID_2024 not found."
+def test_list_releases_with_upper_case_cursor(use_case):
+    releases, next_cursor = use_case.execute(limit=2, cursor="ID_2024")
+    assert len(releases) == 2
+    assert next_cursor is not None
 
 
 def test_list_releases_with_limit_zero(use_case):

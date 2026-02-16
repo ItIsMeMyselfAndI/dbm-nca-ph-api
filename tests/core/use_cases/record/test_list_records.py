@@ -42,25 +42,23 @@ def test_list_records_with_invalid_cursor(use_case):
 def test_list_records_with_empty_cursor(use_case):
     with pytest.raises(ValueError) as exc_info:
         use_case.execute(limit=5, cursor="")
-    assert str(exc_info.value) == "Cursor with ID  not found."
+    assert str(exc_info.value) == "Cursor cannot be an empty string."
 
 
 def test_list_records_with_leading_trailing_spaces_cursor(use_case):
-    with pytest.raises(ValueError) as exc_info:
-        use_case.execute(limit=5, cursor=" 91e80926-ea6a-48d1-bb63-875b4924ecec ")
-    assert (
-        str(exc_info.value)
-        == "Cursor with ID  91e80926-ea6a-48d1-bb63-875b4924ecec  not found."
+    records, next_cursor = use_case.execute(
+        limit=5, cursor=" 91e80926-ea6a-48d1-bb63-875b4924ecec "
     )
+    assert len(records) == 5
+    assert next_cursor is not None
 
 
-def test_list_records_with_case_sensitivity_cursor(use_case):
-    with pytest.raises(ValueError) as exc_info:
-        use_case.execute(limit=5, cursor="91E80926-EA6A-48D1-BB63-875B4924ECEC")
-    assert (
-        str(exc_info.value)
-        == "Cursor with ID 91E80926-EA6A-48D1-BB63-875B4924ECEC not found."
+def test_list_records_with_upper_case_cursor(use_case):
+    records, next_cursor = use_case.execute(
+        limit=5, cursor="91E80926-EA6A-48D1-BB63-875B4924ECEC"
     )
+    assert len(records) == 5
+    assert next_cursor is not None
 
 
 def test_list_records_with_limit_zero(use_case):

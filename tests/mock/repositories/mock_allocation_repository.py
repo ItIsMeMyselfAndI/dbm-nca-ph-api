@@ -20,6 +20,7 @@ class MockAllocationRepository(AllocationRepository):
         return [Allocation(**item) for item in data]
 
     def get_allocation_by_id(self, id: str) -> Allocation:
+        id = id.strip().lower()
         allocation = next((a for a in self.allocations if a.id == id), None)
         if not allocation:
             raise ValueError(f"Allocation with ID {id} not found.")
@@ -30,6 +31,7 @@ class MockAllocationRepository(AllocationRepository):
     ) -> List[Allocation]:
         allocations = self.allocations
         if cursor:
+            cursor = cursor.strip().lower()
             try:
                 cursor_index = next(
                     i for i, a in enumerate(allocations) if a.id == cursor
@@ -49,6 +51,7 @@ class MockAllocationRepository(AllocationRepository):
 
         if cursor:
             try:
+                cursor = cursor.strip().lower()
                 cursor_index = next(
                     i for i, a in enumerate(allocations) if a.id == cursor
                 )

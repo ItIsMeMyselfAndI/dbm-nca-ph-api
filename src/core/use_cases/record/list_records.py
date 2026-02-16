@@ -13,6 +13,9 @@ class ListRecords:
         if limit <= 0:
             return [], None
 
+        if cursor == "":
+            raise ValueError("Cursor cannot be an empty string.")
+
         try:
             if cursor is not None:
                 self.record_repository.get_record_by_id(cursor)

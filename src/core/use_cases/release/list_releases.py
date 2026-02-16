@@ -13,6 +13,9 @@ class ListReleases:
         if limit <= 0:
             return [], None
 
+        if cursor == "":
+            raise ValueError("Cursor cannot be an empty string.")
+
         try:
             if cursor is not None:
                 self.release_repository.get_release_by_id(cursor)

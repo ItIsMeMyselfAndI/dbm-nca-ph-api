@@ -15,6 +15,9 @@ class ListAllocationsByFilter:
         if limit <= 0:
             return [], None
 
+        if cursor == "":
+            raise ValueError("Cursor cannot be an empty string.")
+
         try:
             if cursor is not None:
                 self.allocation_repository.get_allocation_by_id(cursor)

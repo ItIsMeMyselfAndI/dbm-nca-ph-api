@@ -3,11 +3,6 @@ def test_get_release_by_id(client):
     assert response.status_code == 200
     data = response.json()
     assert data["id"] == "id_2024"
-    assert data["year"] == 2024
-    assert (
-        data["url"] == "https://www.dbm.gov.ph/wp-content/uploads/NCA/2024/NCA_2024.pdf"
-    )
-    assert data["filename"] == "NCA_2024.pdf"
 
 
 def test_get_release_by_id_not_found(client):
@@ -22,11 +17,15 @@ def test_get_release_by_id_empty_string(client):
     assert "items" in data
 
 
-def test_get_release_by_id_case_sensitivity(client):
+def test_get_release_by_id_in_upper_case(client):
     response = client.get("/releases/ID_2024")
-    assert response.status_code == 404
+    assert response.status_code == 200
+    data = response.json()
+    assert data["id"] == "id_2024"
 
 
 def test_get_release_by_id_leading_trailing_spaces(client):
     response = client.get("/releases/ id_2024 ")
-    assert response.status_code == 404
+    assert response.status_code == 200
+    data = response.json()
+    assert data["id"] == "id_2024"

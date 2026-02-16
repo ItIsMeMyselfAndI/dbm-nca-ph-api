@@ -11,6 +11,7 @@ class SupabaseRecordRepository(RecordRepository):
         self.client = client
 
     def get_record_by_id(self, id: str) -> Record | None:
+        id = id.strip().lower()
         response = self.client.table("record").select("*").eq("id", id).execute()
         data = response.model_dump().get("data", None)
         if not data:
@@ -22,6 +23,7 @@ class SupabaseRecordRepository(RecordRepository):
         query = self.client.table("record").select("*")
 
         if cursor:
+            cursor = cursor.strip().lower()
             response = (
                 self.client.table("record")
                 .select("released_date")
@@ -62,6 +64,7 @@ class SupabaseRecordRepository(RecordRepository):
         query = self.client.table("record").select("*").eq(key.value, value)
 
         if cursor:
+            cursor = cursor.strip().lower()
             response = (
                 self.client.table("record")
                 .select("released_date")

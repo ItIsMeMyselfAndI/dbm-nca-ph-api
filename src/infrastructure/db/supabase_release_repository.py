@@ -10,6 +10,7 @@ class SupabaseReleaseRepository(ReleaseRepository):
         self.client = client
 
     def get_release_by_id(self, id: str) -> Release | None:
+        id = id.strip().lower()
         response = self.client.table("release").select("*").eq("id", id).execute()
         data = response.model_dump().get("data", None)
         if not data:
@@ -22,6 +23,7 @@ class SupabaseReleaseRepository(ReleaseRepository):
         query = self.client.table("release").select("*")
 
         if cursor is not None:
+            cursor = cursor.strip().lower()
             query = query.gt("id", cursor)
         query = query.order("id", desc=False).limit(limit)
 
