@@ -28,10 +28,12 @@ class MockReleaseRepository(ReleaseRepository):
     def list_releases(self, limit: int, cursor: str | None = None) -> List[Release]:
         releases = self.releases
         if cursor:
+            cursor = cursor.strip().lower()
             try:
-                cursor = cursor.strip().lower()
-                cursor_index = next(i for i, r in enumerate(releases) if r.id == cursor)
-                releases = releases[cursor_index + 1 :]
+                cursor_index = next(
+                    i for i, r in enumerate(self.releases) if r.id == cursor
+                )
+                releases = self.releases[cursor_index + 1 :]
             except StopIteration:
                 raise ValueError(f"Cursor with ID {cursor} not found.")
 
