@@ -29,10 +29,12 @@ class MockRecordRepository(RecordRepository):
     def list_records(self, limit: int, cursor: str | None = None) -> List[Record]:
         records = self.records
         if cursor:
+            cursor = cursor.strip().lower()
             try:
-                cursor = cursor.strip().lower()
-                cursor_index = next(i for i, r in enumerate(records) if r.id == cursor)
-                records = records[cursor_index + 1 :]
+                cursor_index = next(
+                    i for i, r in enumerate(self.records) if r.id == cursor
+                )
+                records = self.records[cursor_index + 1 :]
             except StopIteration:
                 raise ValueError(f"Cursor with ID {cursor} not found.")
 
@@ -42,16 +44,18 @@ class MockRecordRepository(RecordRepository):
     def list_records_by_filter(
         self, limit: int, filter: Dict[RecordFilter, str], cursor: str | None = None
     ) -> List[Record]:
-        key, value = list(filter.items())[0]
-        records = [r for r in self.records if getattr(r, key.value) == value]
-
+        records = self.records
         if cursor:
+            cursor = cursor.strip().lower()
             try:
-                cursor = cursor.strip().lower()
-                cursor_index = next(i for i, r in enumerate(records) if r.id == cursor)
-                records = records[cursor_index + 1 :]
+                cursor_index = next(
+                    i for i, r in enumerate(self.records) if r.id == cursor
+                )
+                records = self.records[cursor_index + 1 :]
             except StopIteration:
                 raise ValueError(f"Cursor with ID {cursor} not found.")
 
+        key, value = list(filter.items())[0]
+        records = [r for r in records if getattr(r, key.value) == value]
         records = records[:limit]
         return records

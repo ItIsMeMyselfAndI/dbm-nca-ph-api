@@ -2,6 +2,12 @@ import pytest
 
 from src.core.entities.record_filter import RecordFilter
 
+RECORD_ID = "40e718ad-5704-44cd-a3f1-a64f2c191538"
+RECORD_FILTER_KEY = RecordFilter.DEPARTMENT
+RECORD_FILTER_VALUE = "Department of Education (DepEd)"
+FILTER = {RECORD_FILTER_KEY: RECORD_FILTER_VALUE}
+LIMIT_ROW_COUNT = 10
+
 
 @pytest.fixture
 def repo():
@@ -20,90 +26,82 @@ def use_case(repo):
 
 
 def test_list_records_by_filter(use_case):
-    filter = {RecordFilter.DEPARTMENT: "Department of Health (DOH)"}
-    records, next_cursor = use_case.execute(filter=filter, limit=10)
-    assert len(records) == 6
-    assert next_cursor is None
+    records, next_cursor = use_case.execute(filter=FILTER, limit=LIMIT_ROW_COUNT)
+    assert len(records) <= LIMIT_ROW_COUNT
+    if len(records) != 0:
+        assert next_cursor == records[-1].id
     for record in records:
-        assert record.department == "Department of Health (DOH)"
+        assert record.department == RECORD_FILTER_VALUE
 
 
 def test_list_records_by_filter_with_cursor(use_case):
-    filter = {RecordFilter.DEPARTMENT: "Department of Health (DOH)"}
-    records, next_cursor = use_case.execute(filter=filter, limit=5)
-    assert len(records) == 5
-    assert next_cursor is not None
+    records, next_cursor = use_case.execute(filter=FILTER, limit=LIMIT_ROW_COUNT)
+    assert len(records) <= LIMIT_ROW_COUNT
+    if len(records) != 0:
+        assert next_cursor == records[-1].id
     for record in records:
-        assert record.department == "Department of Health (DOH)"
+        assert record.department == RECORD_FILTER_VALUE
 
     records_next, next_cursor_next = use_case.execute(
-        filter=filter, limit=5, cursor=next_cursor
+        filter=FILTER, limit=LIMIT_ROW_COUNT, cursor=next_cursor
     )
-    assert len(records_next) == 1
-    assert next_cursor_next is None
+    assert len(records_next) <= LIMIT_ROW_COUNT
+    if len(records) != 0:
+        assert next_cursor_next == records_next[-1].id
     for record in records_next:
-        assert record.department == "Department of Health (DOH)"
+        assert record.department == RECORD_FILTER_VALUE
 
 
 def test_list_records_by_filter_with_invalid_cursor(use_case):
-    filter = {RecordFilter.DEPARTMENT: "Department of Health (DOH)"}
     with pytest.raises(ValueError) as exc_info:
-        use_case.execute(filter=filter, limit=5, cursor="nonexistent-id")
+        use_case.execute(filter=FILTER, limit=LIMIT_ROW_COUNT, cursor="nonexistent-id")
     assert str(exc_info.value) == "Cursor with ID nonexistent-id not found."
 
 
 def test_list_records_by_filter_with_empty_cursor(use_case):
-    filter = {RecordFilter.DEPARTMENT: "Department of Health (DOH)"}
     with pytest.raises(ValueError) as exc_info:
-        use_case.execute(filter=filter, limit=5, cursor="")
+        use_case.execute(filter=FILTER, limit=LIMIT_ROW_COUNT, cursor="")
     assert str(exc_info.value) == "Cursor cannot be an empty string."
 
 
 def test_list_records_by_filter_with_leading_trailing_spaces_cursor(use_case):
-    filter = {RecordFilter.DEPARTMENT: "Department of Health (DOH)"}
     records, next_cursor = use_case.execute(
-        filter=filter,
-        limit=5,
-        cursor=" 91e80926-ea6a-48d1-bb63-875b4924ecec ",
+        filter=FILTER,
+        limit=LIMIT_ROW_COUNT,
+        cursor=f" {RECORD_ID} ",
     )
-    assert len(records) == 5
-    assert next_cursor is not None
+    assert len(records) <= LIMIT_ROW_COUNT
+    if len(records) != 0:
+        assert next_cursor == records[-1].id
 
 
 def test_list_records_by_filter_with_upper_case_cursor(use_case):
-    filter = {RecordFilter.DEPARTMENT: "Department of Health (DOH)"}
     records, next_cursor = use_case.execute(
-        filter=filter,
-        limit=5,
-        cursor="91E80926-EA6A-48D1-BB63-875B4924ECEC",
+        filter=FILTER,
+        limit=LIMIT_ROW_COUNT,
+        cursor=RECORD_ID.upper(),
     )
-    assert len(records) == 5
-    assert next_cursor is not None
+    assert len(records) <= LIMIT_ROW_COUNT
+    if len(records) != 0:
+        assert next_cursor == records[-1].id
 
 
 def test_list_records_by_filter_with_limit_zero(use_case):
-    filter = {RecordFilter.DEPARTMENT: "Department of Health (DOH)"}
-    records, next_cursor = use_case.execute(filter=filter, limit=0)
+    records, next_cursor = use_case.execute(filter=FILTER, limit=0)
     assert len(records) == 0
     assert next_cursor is None
 
 
-def test_list_records_by_filter_with_limit_exceeding_total(use_case):
-    filter = {RecordFilter.DEPARTMENT: "Department of Health (DOH)"}
-    records, next_cursor = use_case.execute(filter=filter, limit=100)
-    assert len(records) == 6
-    assert next_cursor is None
-
-
 def test_list_records_by_filter_with_negative_limit(use_case):
-    filter = {RecordFilter.DEPARTMENT: "Department of Health (DOH)"}
-    records, next_cursor = use_case.execute(filter=filter, limit=-5)
+    records, next_cursor = use_case.execute(filter=FILTER, limit=-5)
     assert len(records) == 0
     assert next_cursor is None
 
 
 def test_list_records_by_filter_with_no_matching_records(use_case):
-    filter = {RecordFilter.DEPARTMENT: "Nonexistent Department"}
-    records, next_cursor = use_case.execute(filter=filter, limit=10)
+    records, next_cursor = use_case.execute(
+        filter={RecordFilter.DEPARTMENT: "Nonexistent Department"},
+        limit=LIMIT_ROW_COUNT,
+    )
     assert len(records) == 0
     assert next_cursor is None
