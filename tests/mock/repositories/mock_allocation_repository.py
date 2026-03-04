@@ -34,9 +34,9 @@ class MockAllocationRepository(AllocationRepository):
             cursor = cursor.strip().lower()
             try:
                 cursor_index = next(
-                    i for i, a in enumerate(allocations) if a.id == cursor
+                    i for i, a in enumerate(self.allocations) if a.id == cursor
                 )
-                allocations = allocations[cursor_index + 1 :]
+                allocations = self.allocations[cursor_index + 1 :]
             except StopIteration:
                 raise ValueError(f"Cursor with ID {cursor} not found.")
 
@@ -46,18 +46,18 @@ class MockAllocationRepository(AllocationRepository):
     def list_allocations_by_filter(
         self, limit: int, filter: Dict[AllocationFilter, str], cursor: str | None = None
     ) -> List[Allocation]:
-        key, value = list(filter.items())[0]
-        allocations = [a for a in self.allocations if getattr(a, key.value) == value]
-
+        allocations = self.allocations
         if cursor:
+            cursor = cursor.strip().lower()
             try:
-                cursor = cursor.strip().lower()
                 cursor_index = next(
-                    i for i, a in enumerate(allocations) if a.id == cursor
+                    i for i, a in enumerate(self.allocations) if a.id == cursor
                 )
-                allocations = allocations[cursor_index + 1 :]
+                allocations = self.allocations[cursor_index + 1 :]
             except StopIteration:
                 raise ValueError(f"Cursor with ID {cursor} not found.")
 
+        key, value = list(filter.items())[0]
+        allocations = [a for a in allocations if getattr(a, key.value) == value]
         allocations = allocations[:limit]
         return allocations
