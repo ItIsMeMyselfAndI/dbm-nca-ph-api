@@ -24,7 +24,7 @@ class ListAllocations:
             raise ValueError(f"Cursor with ID {cursor} not found.")
 
         allocations = self.allocation_repository.list_allocations(limit, cursor)
-        if len(allocations) < limit:
+        if len(allocations) == 0:
             next_cursor = None
         else:
             next_cursor = allocations[-1].id

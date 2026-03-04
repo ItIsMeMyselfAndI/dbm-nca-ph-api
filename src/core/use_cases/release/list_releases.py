@@ -23,7 +23,7 @@ class ListReleases:
             raise ValueError(f"Cursor with ID {cursor} not found.")
 
         releases = self.release_repository.list_releases(limit, cursor)
-        if len(releases) < limit:
+        if len(releases) == 0:
             next_cursor = None
         else:
             next_cursor = releases[-1].id

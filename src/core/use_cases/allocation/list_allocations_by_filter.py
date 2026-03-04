@@ -27,7 +27,7 @@ class ListAllocationsByFilter:
         allocations = self.allocation_repository.list_allocations_by_filter(
             limit, filter, cursor
         )
-        if len(allocations) < limit:
+        if len(allocations) == 0:
             next_cursor = None
         else:
             next_cursor = allocations[-1].id

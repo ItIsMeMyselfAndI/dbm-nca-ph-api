@@ -25,7 +25,7 @@ class ListRecordsByFilter:
             raise ValueError(f"Cursor with ID {cursor} not found.")
 
         records = self.record_repository.list_records_by_filter(limit, filter, cursor)
-        if len(records) < limit:
+        if len(records) == 0:
             next_cursor = None
         else:
             next_cursor = records[-1].id
