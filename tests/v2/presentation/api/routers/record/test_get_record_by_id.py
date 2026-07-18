@@ -22,3 +22,12 @@ def test_get_record_by_id_leading_trailing_spaces(client):
     assert response.status_code == 200
     data = response.json()
     assert data["id"] == "a729caee-c88f-416b-ba35-fca60a553aaa"
+
+
+def test_get_record_by_id_empty_string(client):
+    response = client.get("/records/")
+    assert response.status_code == 200
+    data = response.json()
+    assert "items" in data
+    assert data["cursor"] is None
+    assert data["next_cursor"] is not None

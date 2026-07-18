@@ -22,3 +22,10 @@ def test_get_release_by_id_leading_trailing_spaces(client):
     assert response.status_code == 200
     data = response.json()
     assert data["id"] == "id_2024"
+
+
+def test_get_release_by_id_empty_string(client):
+    response = client.get("/releases/")
+    assert response.status_code == 200
+    data = response.json()
+    assert "items" in data
