@@ -93,7 +93,7 @@ src/
 - [x] **PH11**: Register v2 router in `main.py`
 - [x] **PH12**: Local PostgreSQL setup (one-time) + Alembic initialization
 - [x] **PH13**: Seed script (`scripts/seed.py`)
-- [ ] **PH14**: Run tests + verify no regressions
+- [x] **PH14**: Run tests + verify no regressions
 
 ---
 
