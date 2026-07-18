@@ -91,7 +91,7 @@ src/
 - [x] **PH9**: Create `dependencies_v2.py`
 - [x] **PH10**: Create v2 routes (`presentation/api/v2/routers/`)
 - [x] **PH11**: Register v2 router in `main.py`
-- [ ] **PH12**: Local PostgreSQL setup (one-time) + Alembic initialization
+- [x] **PH12**: Local PostgreSQL setup (one-time) + Alembic initialization
 - [ ] **PH13**: Seed script (`scripts/seed.py`)
 - [ ] **PH14**: Run tests + verify no regressions
 
