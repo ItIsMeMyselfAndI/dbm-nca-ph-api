@@ -1,147 +1,154 @@
 import asyncio
 import sys
 from pathlib import Path
-from typing import List
+from datetime import datetime, timezone
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from sqlalchemy import delete
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import text
 
-from src.core.entities.allocation import Allocation
-from src.core.entities.record import Record
-from src.core.entities.release import Release
 from src.infrastructure.db.database import async_session
-from src.infrastructure.db.models import AllocationModel, RecordModel, ReleaseModel
-from src.infrastructure.db.supabase_allocation_repository import (
-    SupabaseAllocationRepository,
-)
-from src.infrastructure.db.supabase_record_repository import SupabaseRecordRepository
-from src.infrastructure.db.supabase_release_repository import SupabaseReleaseRepository
-
-BATCH_SIZE = 1000
+from src.infrastructure.db.models import ReleaseModel, RecordModel, AllocationModel
 
 
-def _fetch_all_releases() -> List[Release]:
-    repo = SupabaseReleaseRepository()
-    items: List[Release] = []
-    cursor: str | None = None
-    while True:
-        batch = repo.list_releases(limit=BATCH_SIZE, cursor=cursor)
-        if not batch:
-            break
-        items.extend(batch)
-        cursor = batch[-1].id
-        print(f"  Fetched {len(items)} releases...")
-    return items
+releases = [
+    ReleaseModel(
+        id="id_NCA_2024_Q1",
+        title="Notice of Cash Allocation - First Quarter FY 2024",
+        url="https://www.dbm.gov.ph/wp-content/uploads/NCA/2024/NCA_Q1_FY2024.pdf",
+        filename="NCA_Q1_FY2024.pdf",
+        year=2024,
+        page_count=1580,
+        file_meta_created_at=datetime(2024, 1, 2, 8, 0, 0, tzinfo=timezone.utc),
+        file_meta_modified_at=datetime(2024, 1, 15, 14, 30, 0, tzinfo=timezone.utc),
+    ),
+    ReleaseModel(
+        id="id_NCA_2025_Q2",
+        title="Notice of Cash Allocation - Second Quarter FY 2025",
+        url="https://www.dbm.gov.ph/wp-content/uploads/NCA/2025/NCA_Q2_FY2025.pdf",
+        filename="NCA_Q2_FY2025.pdf",
+        year=2025,
+        page_count=1720,
+        file_meta_created_at=datetime(2025, 4, 1, 6, 0, 0, tzinfo=timezone.utc),
+        file_meta_modified_at=datetime(2025, 4, 10, 10, 15, 0, tzinfo=timezone.utc),
+    ),
+    ReleaseModel(
+        id="id_SUPPL_NCA_2023",
+        title="Supplemental Notice of Cash Allocation - COA Disallowance FY 2023",
+        url="https://www.dbm.gov.ph/wp-content/uploads/NCA/2023/SUPPL_NCA_2023.pdf",
+        filename="SUPPL_NCA_2023.pdf",
+        year=2023,
+        page_count=420,
+        file_meta_created_at=datetime(2023, 11, 20, 9, 0, 0, tzinfo=timezone.utc),
+        file_meta_modified_at=None,
+    ),
+]
+
+records = [
+    RecordModel(
+        nca_number="NCA-NCR-25-0001001",
+        nca_type="REG",
+        released_date="2025-01-15T08:30:00+00:00",
+        department="Department of Education (DepEd)",
+        purpose="To cover the regular operating and RLIP requirements for the first quarter (January to March 2025)",
+        release_id="id_NCA_2025_Q2",
+    ),
+    RecordModel(
+        nca_number="NCA-ROVII-25-0004106",
+        nca_type="REG",
+        released_date="2025-02-10T09:15:00+00:00",
+        department="Department of Health (DOH)",
+        purpose="To cover the regular operating requirements for the Health Facilities Enhancement Program (HFEP) FY 2025",
+        release_id="id_NCA_2025_Q2",
+    ),
+    RecordModel(
+        nca_number="NCA-CAR-25-0005162",
+        nca_type="REG",
+        released_date="2025-03-05T10:00:00+00:00",
+        department="Department of Public Works and Highways (DPWH)",
+        purpose="To cover the regular operating requirements for infrastructure projects under the FY 2025 General Appropriations Act",
+        release_id="id_NCA_2025_Q2",
+    ),
+    RecordModel(
+        nca_number="NCA-NCR-24-0000001",
+        nca_type="REG",
+        released_date="2024-01-10T08:00:00+00:00",
+        department="Department of Education (DepEd)",
+        purpose="To cover the regular operating requirements for FY 2024",
+        release_id="id_NCA_2024_Q1",
+    ),
+    RecordModel(
+        nca_number="NCA-BMB-A-23-0001001",
+        nca_type="REG",
+        released_date="2023-12-01T09:00:00+00:00",
+        department="Department of Budget and Management (DBM)",
+        purpose="To cover the supplemental budget requirements per COA disallowance FY 2023",
+        release_id="id_SUPPL_NCA_2023",
+    ),
+]
+
+allocations = [
+    AllocationModel(
+        nca_number="NCA-NCR-25-0001001",
+        agency="Office of the Secretary",
+        operating_unit="Juan Sumulong Memorial National High School",
+        amount=8_750_000.00,
+    ),
+    AllocationModel(
+        nca_number="NCA-NCR-25-0001001",
+        agency="Office of the Secretary",
+        operating_unit="Quezon City Science High School",
+        amount=6_200_000.00,
+    ),
+    AllocationModel(
+        nca_number="NCA-ROVII-25-0004106",
+        agency="University of the Philippines - Philippine General Hospital",
+        operating_unit="",
+        amount=125_000_000.00,
+    ),
+    AllocationModel(
+        nca_number="NCA-CAR-25-0005162",
+        agency="Office of the Secretary",
+        operating_unit="Cordillera Center for Health Development",
+        amount=48_562_000.00,
+    ),
+    AllocationModel(
+        nca_number="NCA-NCR-24-0000001",
+        agency="Office of the Secretary",
+        operating_unit="Manila National High School",
+        amount=9_100_000.00,
+    ),
+    AllocationModel(
+        nca_number="NCA-BMB-A-23-0001001",
+        agency="Commission on Audit",
+        operating_unit="COA Central Office",
+        amount=15_000_000.00,
+    ),
+]
 
 
-def _fetch_all_records() -> List[Record]:
-    repo = SupabaseRecordRepository()
-    items: List[Record] = []
-    cursor: str | None = None
-    while True:
-        batch = repo.list_records(limit=BATCH_SIZE, cursor=cursor)
-        if not batch:
-            break
-        items.extend(batch)
-        cursor = batch[-1].id
-        print(f"  Fetched {len(items)} records...")
-    return items
-
-
-def _fetch_all_allocations() -> List[Allocation]:
-    repo = SupabaseAllocationRepository()
-    items: List[Allocation] = []
-    cursor: str | None = None
-    while True:
-        batch = repo.list_allocations(limit=BATCH_SIZE, cursor=cursor)
-        if not batch:
-            break
-        items.extend(batch)
-        cursor = batch[-1].id
-        print(f"  Fetched {len(items)} allocations...")
-    return items
-
-
-async def _clear_tables(session: AsyncSession):
-    await session.execute(delete(AllocationModel))
-    await session.execute(delete(RecordModel))
-    await session.execute(delete(ReleaseModel))
-    await session.commit()
-
-
-async def _insert_releases(session: AsyncSession, releases: List[Release]):
-    for i, r in enumerate(releases):
-        session.add(
-            ReleaseModel(
-                id=r.id,
-                title=r.title,
-                url=r.url,
-                filename=r.filename,
-                year=r.year,
-                page_count=r.page_count,
-                file_meta_created_at=r.file_meta_created_at,
-                file_meta_modified_at=r.file_meta_modified_at,
-            )
-        )
-        if (i + 1) % 500 == 0:
-            await session.flush()
-    await session.commit()
-    print(f"  Inserted {len(releases)} releases.")
-
-
-async def _insert_records(session: AsyncSession, records: List[Record]):
-    for i, r in enumerate(records):
-        session.add(
-            RecordModel(
-                id=r.id,
-                nca_number=r.nca_number,
-                nca_type=r.nca_type,
-                department=r.department,
-                released_date=r.released_date,
-                purpose=r.purpose,
-                release_id=r.release_id,
-            )
-        )
-        if (i + 1) % 500 == 0:
-            await session.flush()
-    await session.commit()
-    print(f"  Inserted {len(records)} records.")
-
-
-async def _insert_allocations(session: AsyncSession, allocations: List[Allocation]):
-    for i, a in enumerate(allocations):
-        session.add(
-            AllocationModel(
-                id=a.id,
-                nca_number=a.nca_number,
-                agency=a.agency,
-                operating_unit=a.operating_unit,
-                amount=a.amount,
-            )
-        )
-        if (i + 1) % 500 == 0:
-            await session.flush()
-    await session.commit()
-    print(f"  Inserted {len(allocations)} allocations.")
-
-
-async def main():
-    print("Fetching data from Supabase (v1)...")
-    releases = await asyncio.to_thread(_fetch_all_releases)
-    records = await asyncio.to_thread(_fetch_all_records)
-    allocations = await asyncio.to_thread(_fetch_all_allocations)
-    print(f"Fetched: {len(releases)} releases, {len(records)} records, {len(allocations)} allocations")
-
-    print("Writing to local Postgres (v2)...")
+async def seed():
     async with async_session() as session:
-        await _clear_tables(session)
-        await _insert_releases(session, releases)
-        await _insert_records(session, records)
-        await _insert_allocations(session, allocations)
+        result = await session.execute(text("SELECT COUNT(*) FROM release"))
+        count = result.scalar()
+        if count and count > 0:
+            print(f"Database already has {count} release(s). Skipping seed.")
+            return
 
-    print("Seed complete.")
+        session.add_all(releases)
+        await session.flush()
+
+        session.add_all(records)
+        await session.flush()
+
+        session.add_all(allocations)
+        await session.commit()
+
+    print(
+        f"Seeded {len(releases)} releases, "
+        f"{len(records)} records, "
+        f"{len(allocations)} allocations."
+    )
 
 
-asyncio.run(main())
+asyncio.run(seed())
