@@ -1,7 +1,7 @@
 import pytest
 
 from src.core.entities.allocation_filter import AllocationFilter
-from src.core.use_cases.allocation.list_allocations_by_filter import (
+from src.core.use_cases.v1.allocation.list_allocations_by_filter import (
     ListAllocationsByFilter,
 )
 
@@ -23,7 +23,7 @@ def repo():
 
 @pytest.fixture
 def use_case(repo):
-    from src.core.use_cases.allocation.list_allocations_by_filter import (
+    from src.core.use_cases.v1.allocation.list_allocations_by_filter import (
         ListAllocationsByFilter,
     )
 

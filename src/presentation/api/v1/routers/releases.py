@@ -2,8 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException
 
 from src.core.interfaces.release_repository import ReleaseRepository
 
-from src.core.use_cases.release.get_release_by_id import GetReleaseById
-from src.core.use_cases.release.list_releases import ListReleases
+from src.core.use_cases.v1.release.get_release_by_id import GetReleaseById
+from src.core.use_cases.v1.release.list_releases import ListReleases
 
 from src.presentation.api.schemas import CursorPageResponse, ReleaseResponse
 from src.presentation.api.dependencies import get_release_repository

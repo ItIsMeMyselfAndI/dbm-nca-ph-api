@@ -4,9 +4,9 @@ from src.core.entities.allocation_filter import AllocationFilter
 
 from src.core.interfaces.allocation_repository import AllocationRepository
 
-from src.core.use_cases.allocation.get_allocation_by_id import GetAllocationByID
-from src.core.use_cases.allocation.list_allocations import ListAllocations
-from src.core.use_cases.allocation.list_allocations_by_filter import (
+from src.core.use_cases.v1.allocation.get_allocation_by_id import GetAllocationByID
+from src.core.use_cases.v1.allocation.list_allocations import ListAllocations
+from src.core.use_cases.v1.allocation.list_allocations_by_filter import (
     ListAllocationsByFilter,
 )
 

@@ -1,6 +1,6 @@
 import pytest
 
-from src.core.use_cases.record.list_records import ListRecords
+from src.core.use_cases.v1.record.list_records import ListRecords
 
 RECORD_ID = "40e718ad-5704-44cd-a3f1-a64f2c191538"
 LIMIT_ROW_COUNT = 10
@@ -17,7 +17,7 @@ def repo():
 
 @pytest.fixture
 def use_case(repo):
-    from src.core.use_cases.record.list_records import ListRecords
+    from src.core.use_cases.v1.record.list_records import ListRecords
 
     return ListRecords(repo)
 

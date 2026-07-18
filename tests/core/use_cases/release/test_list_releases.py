@@ -1,6 +1,6 @@
 import pytest
 
-from src.core.use_cases.release.list_releases import ListReleases
+from src.core.use_cases.v1.release.list_releases import ListReleases
 
 RELEASE_ID = "id_2024"
 LIMIT_ROW_COUNT = 2
@@ -17,7 +17,7 @@ def repo():
 
 @pytest.fixture
 def use_case(repo):
-    from src.core.use_cases.release.list_releases import ListReleases
+    from src.core.use_cases.v1.release.list_releases import ListReleases
 
     return ListReleases(repo)
 

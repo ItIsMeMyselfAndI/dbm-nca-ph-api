@@ -1,6 +1,6 @@
 import pytest
 
-from src.core.use_cases.allocation.get_allocation_by_id import GetAllocationByID
+from src.core.use_cases.v1.allocation.get_allocation_by_id import GetAllocationByID
 
 ALLOCATION_ID = "00094280-64b6-43c7-893a-a0c18d73834a"
 
@@ -16,7 +16,7 @@ def repo():
 
 @pytest.fixture
 def use_case(repo):
-    from src.core.use_cases.allocation.get_allocation_by_id import GetAllocationByID
+    from src.core.use_cases.v1.allocation.get_allocation_by_id import GetAllocationByID
 
     return GetAllocationByID(repo)
 

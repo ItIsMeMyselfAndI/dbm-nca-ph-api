@@ -1,6 +1,6 @@
 import pytest
 
-from src.core.use_cases.release.get_release_by_id import GetReleaseById
+from src.core.use_cases.v1.release.get_release_by_id import GetReleaseById
 
 RELEASE_ID = "id_2024"
 
@@ -16,7 +16,7 @@ def repo():
 
 @pytest.fixture
 def use_case(repo):
-    from src.core.use_cases.release.get_release_by_id import GetReleaseById
+    from src.core.use_cases.v1.release.get_release_by_id import GetReleaseById
 
     return GetReleaseById(repo)
 

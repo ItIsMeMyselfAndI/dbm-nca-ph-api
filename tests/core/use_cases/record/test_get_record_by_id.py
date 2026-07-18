@@ -1,6 +1,6 @@
 import pytest
 
-from src.core.use_cases.record.get_record_by_id import GetRecordByID
+from src.core.use_cases.v1.record.get_record_by_id import GetRecordByID
 
 RECORD_ID = "40e718ad-5704-44cd-a3f1-a64f2c191538"
 
@@ -16,7 +16,7 @@ def repo():
 
 @pytest.fixture
 def use_case(repo):
-    from src.core.use_cases.record.get_record_by_id import GetRecordByID
+    from src.core.use_cases.v1.record.get_record_by_id import GetRecordByID
 
     return GetRecordByID(repo)
 

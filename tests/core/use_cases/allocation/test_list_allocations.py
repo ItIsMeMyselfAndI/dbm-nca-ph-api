@@ -1,6 +1,6 @@
 import pytest
 
-from src.core.use_cases.allocation.list_allocations import ListAllocations
+from src.core.use_cases.v1.allocation.list_allocations import ListAllocations
 
 ALLOCATION_ID = "0000a66b-0265-4b42-adfe-559f98646c91"
 LIMIT_ROW_COUNT = 5
@@ -17,7 +17,7 @@ def repo():
 
 @pytest.fixture
 def use_case(repo):
-    from src.core.use_cases.allocation.list_allocations import ListAllocations
+    from src.core.use_cases.v1.allocation.list_allocations import ListAllocations
 
     return ListAllocations(repo)
 

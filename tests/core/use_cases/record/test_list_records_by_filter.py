@@ -20,7 +20,7 @@ def repo():
 
 @pytest.fixture
 def use_case(repo):
-    from src.core.use_cases.record.list_records_by_filter import ListRecordsByFilter
+    from src.core.use_cases.v1.record.list_records_by_filter import ListRecordsByFilter
 
     return ListRecordsByFilter(repo)
 

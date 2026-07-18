@@ -4,9 +4,9 @@ from src.core.entities.record_filter import RecordFilter
 
 from src.core.interfaces.record_repository import RecordRepository
 
-from src.core.use_cases.record.get_record_by_id import GetRecordByID
-from src.core.use_cases.record.list_records import ListRecords
-from src.core.use_cases.record.list_records_by_filter import ListRecordsByFilter
+from src.core.use_cases.v1.record.get_record_by_id import GetRecordByID
+from src.core.use_cases.v1.record.list_records import ListRecords
+from src.core.use_cases.v1.record.list_records_by_filter import ListRecordsByFilter
 
 from src.presentation.api.schemas import CursorPageResponse, RecordResponse
 from src.presentation.api.dependencies import get_record_repository
