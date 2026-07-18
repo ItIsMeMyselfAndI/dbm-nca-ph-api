@@ -68,7 +68,12 @@ sudo -iu postgres createdb -O <name> dbm_nca_ph
 
 If `Peer authentication failed`, edit `pg_hba.conf` and change `peer` to `md5` for local lines, then restart PostgreSQL.
 
-**Set `DATABASE_URL` in `.env` (replace `<name>` with your username):**
+**Set `DATABASE_URL` in `.env` (replace `<name>` and `<password>`):**
+```
+DATABASE_URL=postgresql+asyncpg://<name>:<password>@localhost:5432/dbm_nca_ph
+```
+
+If you configured trust or peer auth (no password), omit the password:
 ```
 DATABASE_URL=postgresql+asyncpg://<name>@localhost:5432/dbm_nca_ph
 ```
@@ -83,9 +88,9 @@ python scripts/create_tables.py
 python scripts/seed.py
 ```
 
-**Verify:**
+**Verify (replace `<name>` with your username):**
 ```bash
-psql -U postgres -h localhost -d dbm_nca_ph -c "\dt"
+psql -U <name> -h localhost -d dbm_nca_ph -c "\dt"
 ```
 Should show: `release`, `record`, `allocation`.
 
