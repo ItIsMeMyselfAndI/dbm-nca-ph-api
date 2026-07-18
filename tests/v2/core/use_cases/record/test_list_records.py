@@ -2,6 +2,8 @@ import pytest
 
 from src.core.exceptions import ValidationError
 
+RECORD_ID = "a729caee-c88f-416b-ba35-fca60a553aaa"
+
 
 @pytest.fixture
 def repo():
@@ -53,3 +55,26 @@ async def test_list_records_with_negative_limit(use_case):
     records, next_cursor = await use_case.execute(limit=-5)
     assert len(records) == 0
     assert next_cursor is None
+
+
+@pytest.mark.asyncio
+async def test_list_records_with_invalid_cursor(use_case):
+    records, next_cursor = await use_case.execute(limit=10, cursor="nonexistent-id")
+    assert len(records) == 0
+    assert next_cursor is None
+
+
+@pytest.mark.asyncio
+async def test_list_records_with_leading_trailing_spaces_cursor(use_case):
+    records, next_cursor = await use_case.execute(limit=10, cursor=f" {RECORD_ID} ")
+    assert len(records) <= 10
+    if records:
+        assert next_cursor == records[-1].id
+
+
+@pytest.mark.asyncio
+async def test_list_records_with_upper_case_cursor(use_case):
+    records, next_cursor = await use_case.execute(limit=10, cursor=RECORD_ID.upper())
+    assert len(records) <= 10
+    if records:
+        assert next_cursor == records[-1].id

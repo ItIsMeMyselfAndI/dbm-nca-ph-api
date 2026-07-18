@@ -2,6 +2,8 @@ import pytest
 
 from src.core.exceptions import ValidationError
 
+ALLOCATION_ID = "0000a66b-0265-4b42-adfe-559f98646c91"
+
 
 @pytest.fixture
 def repo():
@@ -53,3 +55,26 @@ async def test_list_allocations_with_negative_limit(use_case):
     allocations, next_cursor = await use_case.execute(limit=-5)
     assert len(allocations) == 0
     assert next_cursor is None
+
+
+@pytest.mark.asyncio
+async def test_list_allocations_with_invalid_cursor(use_case):
+    allocations, next_cursor = await use_case.execute(limit=5, cursor="nonexistent-id")
+    assert len(allocations) == 0
+    assert next_cursor is None
+
+
+@pytest.mark.asyncio
+async def test_list_allocations_with_leading_trailing_spaces_cursor(use_case):
+    allocations, next_cursor = await use_case.execute(limit=5, cursor=f" {ALLOCATION_ID} ")
+    assert len(allocations) <= 5
+    if allocations:
+        assert next_cursor == allocations[-1].id
+
+
+@pytest.mark.asyncio
+async def test_list_allocations_with_upper_case_cursor(use_case):
+    allocations, next_cursor = await use_case.execute(limit=5, cursor=ALLOCATION_ID.upper())
+    assert len(allocations) <= 5
+    if allocations:
+        assert next_cursor == allocations[-1].id

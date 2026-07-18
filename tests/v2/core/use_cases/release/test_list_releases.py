@@ -73,3 +73,10 @@ async def test_list_releases_with_negative_limit(use_case):
     releases, next_cursor = await use_case.execute(limit=-5)
     assert len(releases) == 0
     assert next_cursor is None
+
+
+@pytest.mark.asyncio
+async def test_list_releases_with_invalid_cursor(use_case):
+    releases, next_cursor = await use_case.execute(limit=2, cursor="nonexistent-id")
+    assert len(releases) == 0
+    assert next_cursor is None
