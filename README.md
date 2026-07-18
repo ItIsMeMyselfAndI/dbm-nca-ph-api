@@ -23,9 +23,71 @@ Available variables:
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `SUPABASE_URL` | Yes | Supabase project URL |
-| `SUPABASE_ANON_KEY` | Yes | Supabase anonymous key |
+| `SUPABASE_URL` | Yes (v1) | Supabase project URL |
+| `SUPABASE_ANON_KEY` | Yes (v1) | Supabase anonymous key |
+| `DATABASE_URL` | Yes (v2) | PostgreSQL connection string for v2 local backend |
 | `VERCEL_OIDC_TOKEN` | No | Vercel OIDC token (deployment only) |
+
+## Database Setup
+
+The API supports two backends via API versioning — **v1** uses Supabase (REST), **v2** uses local PostgreSQL (SQLAlchemy + asyncpg).
+
+### Supabase (v1)
+
+Set up a Supabase project and populate your `.env`:
+
+```
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_ANON_KEY=your-anon-key
+```
+
+### Local PostgreSQL (v2)
+
+**Install PostgreSQL:**
+
+*Arch Linux:*
+```bash
+sudo pacman -S postgresql
+sudo -iu postgres initdb --locale en_US.UTF-8 -D /var/lib/postgres/data
+sudo systemctl start postgresql
+sudo systemctl enable postgresql
+```
+
+*Debian/Ubuntu:*
+```bash
+sudo apt update && sudo apt install postgresql postgresql-client
+sudo systemctl start postgresql
+sudo systemctl enable postgresql
+```
+
+**Create database and user:**
+```bash
+sudo -iu postgres createuser --superuser <name>
+sudo -iu postgres createdb -O <name> dbm_nca_ph
+```
+
+If `Peer authentication failed`, edit `pg_hba.conf` and change `peer` to `md5` for local lines, then restart PostgreSQL.
+
+**Set `DATABASE_URL` in `.env` (replace `<name>` with your username):**
+```
+DATABASE_URL=postgresql+asyncpg://<name>@localhost:5432/dbm_nca_ph
+```
+
+**Create tables:**
+```bash
+python scripts/create_tables.py
+```
+
+**Seed data (optional):**
+```bash
+python scripts/seed.py
+```
+
+**Verify:**
+```bash
+psql -U postgres -h localhost -d dbm_nca_ph -c "\dt"
+```
+Should show: `release`, `record`, `allocation`.
 
 ## Running
 
