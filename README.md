@@ -12,12 +12,20 @@ uv pip install -r requirements.txt
 
 ## Configuration
 
-Create a `.env` file in the project root:
+Copy the sample files and fill in your values:
 
+```bash
+cp .env.sample .env
+cp .env.local.sample .env.local
 ```
-SUPABASE_URL=your_supabase_url
-SUPABASE_ANON_KEY=your_supabase_anon_key
-```
+
+Available variables:
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `SUPABASE_URL` | Yes | Supabase project URL |
+| `SUPABASE_ANON_KEY` | Yes | Supabase anonymous key |
+| `VERCEL_OIDC_TOKEN` | No | Vercel OIDC token (deployment only) |
 
 ## Running
 
@@ -40,6 +48,8 @@ pytest
 ## Project Structure
 
 ```
+├── .env.sample                      # Environment variable template
+├── .env.local.sample                # Local env template (Vercel)
 ├── main.py                          # Application entry point
 ├── src/
 │   ├── core/entities/               # Domain models and filter enums
