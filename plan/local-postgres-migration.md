@@ -36,13 +36,15 @@ Shared: core/entities/, core/interfaces/, presentation/api/schemas.py
 src/
 ├── core/
 │   ├── entities/                       # UNCHANGED
-│   ├── interfaces/                     # UNCHANGED (sync Protocols)
+│   ├── exceptions.py                   # NEW: NotFoundError, ValidationError
+│   ├── interfaces/                     # UNCHANGED (sync Protocols) + NEW async Protocols
 │   └── use_cases/
 │       ├── v1/                         # MOVED originals here
 │       │   ├── release/
 │       │   ├── record/
 │       │   └── allocation/
 │       └── v2/                         # NEW async use cases
+│           ├── _cursor.py              # NEW: shared compute_next_cursor helper
 │           ├── release/
 │           ├── record/
 │           └── allocation/
@@ -78,16 +80,16 @@ src/
 
 ## 4. Implementation Checklist (14 items)
 
-- [ ] **PH1**: Restructure use cases - move v1 to `core/use_cases/v1/`, update all imports, delete originals
-- [ ] **PH2**: Create v2 async use cases in `core/use_cases/v2/` with improvements
-- [ ] **PH3**: Add dependencies (`sqlalchemy`, `asyncpg`) + `DATABASE_URL` config
-- [ ] **PH4**: Create `database.py` (async engine + session factory)
-- [ ] **PH5**: Create SQLAlchemy `models.py`
-- [ ] **PH6**: Create `PostgresReleaseRepository`
-- [ ] **PH7**: Create `PostgresRecordRepository`
-- [ ] **PH8**: Create `PostgresAllocationRepository`
-- [ ] **PH9**: Create `dependencies_v2.py`
-- [ ] **PH10**: Create v2 routes (`presentation/api/v2/routers/`)
+- [x] **PH1**: Restructure use cases - move v1 to `core/use_cases/v1/`, update all imports, delete originals
+- [x] **PH2**: Create v2 async use cases in `core/use_cases/v2/` with improvements
+- [x] **PH3**: Add dependencies (`sqlalchemy`, `asyncpg`) + `DATABASE_URL` config
+- [x] **PH4**: Create `database.py` (async engine + session factory)
+- [x] **PH5**: Create SQLAlchemy `models.py`
+- [x] **PH6**: Create `PostgresReleaseRepository`
+- [x] **PH7**: Create `PostgresRecordRepository`
+- [x] **PH8**: Create `PostgresAllocationRepository`
+- [x] **PH9**: Create `dependencies_v2.py`
+- [x] **PH10**: Create v2 routes (`presentation/api/v2/routers/`)
 - [ ] **PH11**: Register v2 router in `main.py`
 - [ ] **PH12**: Docker Compose for local Postgres
 - [ ] **PH13**: Seed script (`scripts/seed.py`)
@@ -222,7 +224,8 @@ Registered at `/api/v2/*` in `main.py`.
 | Directory/File | Reason |
 |----------------|--------|
 | `core/entities/*.py` | Domain models — database agnostic, shared by v1+v2 |
-| `core/interfaces/*.py` | Protocol contracts — implemented by both Supabase and Postgres repos |
+| `core/interfaces/async_*_repository.py` | NEW async protocols for v2 repos |
+| `core/interfaces/*.py` (sync) | Protocol contracts — implemented by Supabase repos |
 | `core/entities/record_filter.py` | Shared enum |
 | `core/entities/allocation_filter.py` | Shared enum |
 | `presentation/api/schemas.py` | Response schemas — shared by v1+v2 routes |
@@ -230,7 +233,8 @@ Registered at `/api/v2/*` in `main.py`.
 | `presentation/api/v1/` (routers, not imports) | v1 route logic — untouched, only import paths change |
 | `infrastructure/db/supabase_client.py` | v1 still uses this |
 | `infrastructure/db/supabase_*_repository.py` | v1 still uses these |
-| `infrastructure/config.py` | Untouched in Phase 1; `DATABASE_URL` added later in Phase 3 |
+| `core/exceptions.py` | NEW custom exceptions (NotFoundError, ValidationError) |
+| `infrastructure/config.py` | Untouched in Phase 1; `DATABASE_URL` added in Phase 3 |
 | `tests/conftest.py` | Overrides v1 DI — untouched |
 | `tests/mock/` | Mock repos implement v1 Protocols — untouched |
 | `main.py` | Untouched until Phase 11 when v2 is registered |
@@ -241,10 +245,33 @@ Registered at `/api/v2/*` in `main.py`.
 
 ## 9. Syncing to Server (Target: `eger@100.105.114.70`)
 
-After every commit, sync changed files to the Debian 12 server (32-bit):
+### Remote Setup (one-time)
 
 ```bash
-rsync -avz --delete --exclude '.venv' --exclude '__pycache__' --exclude '.git' --exclude '.pytest_cache' ./ eger@100.105.114.70:/home/eger/projects/dbm-nca-ph-api/
+ssh eger@100.105.114.70
+rm -rf /home/eger/projects/dbm-nca-ph-api /home/eger/local-repos/dbm-nca-ph-api.git
+mkdir -p /home/eger/local-repos/dbm-nca-ph-api.git
+cd /home/eger/local-repos/dbm-nca-ph-api.git
+git init --bare
+exit
+
+# On Arch dev machine
+git remote add debian ssh://eger@100.105.114.70/home/eger/local-repos/dbm-nca-ph-api.git
 ```
 
-> **Note**: Uses `rsync` (not `scp`) because it handles deletions, respects `.gitignore`-style excludes, and only transfers diffs. Append to every commit message for convenience.
+### After every commit
+
+```bash
+git push debian main
+```
+
+### On server (for active work)
+
+```bash
+ssh eger@100.105.114.70
+cd /home/eger/projects
+git clone /home/eger/local-repos/dbm-nca-ph-api.git
+# Subsequent updates:
+cd /home/eger/projects/dbm-nca-ph-api
+git pull origin main
+```
