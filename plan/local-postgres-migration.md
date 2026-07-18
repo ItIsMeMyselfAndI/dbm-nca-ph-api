@@ -14,7 +14,7 @@ Add a local PostgreSQL backend via **API versioning** — v1 continues with Supa
 | Supabase SDK is REST-based — no connection pooling, prepared statements, or raw SQL | v2 uses SQLAlchemy 2.0 async + asyncpg — pooling, prepared statements, full SQL | 10-100x faster local queries; production still uses Supabase REST via v1 | v2 queries run at sub-5ms locally vs 50-200ms Supabase REST |
 | Repository implementations are hard-coupled to Supabase `.eq()/.gt()` builder | New `Postgres*Repository` classes implement the same Protocols | Zero changes to entities, interfaces, or v1 code | Both v1 and v2 satisfy identical Protocol contracts |
 | No migration tooling — schema managed manually | Alembic for v2 schema versioning | Auditable, reversible, automated schema changes | `alembic upgrade head` creates the full schema |
-| No local dev bootstrap — every new dev needs Supabase account | Docker Compose + seed script | Zero-setup: `docker compose up -d db` + `alembic upgrade head` + `python scripts/seed.py` | Clone → 3 commands → working API |
+| No local dev bootstrap — every new dev needs Supabase account | Local Postgres + seed script | One-time Postgres setup + `alembic upgrade head` + `python scripts/seed.py` | Clone → 3 commands → working API |
 
 ---
 
@@ -91,7 +91,7 @@ src/
 - [x] **PH9**: Create `dependencies_v2.py`
 - [x] **PH10**: Create v2 routes (`presentation/api/v2/routers/`)
 - [x] **PH11**: Register v2 router in `main.py`
-- [ ] **PH12**: Docker Compose for local Postgres
+- [ ] **PH12**: Local PostgreSQL setup (one-time) + Alembic initialization
 - [ ] **PH13**: Seed script (`scripts/seed.py`)
 - [ ] **PH14**: Run tests + verify no regressions
 
@@ -240,6 +240,100 @@ Registered at `/api/v2/*` in `main.py`.
 | `main.py` | Untouched until Phase 11 when v2 is registered |
 | `vercel.json` | Deployment config — no change |
 | `requirements.txt` | Untouched until Phase 3 |
+
+---
+
+## 10. Local PostgreSQL Setup Guide (One-Time)
+
+### Prerequisites
+
+PostgreSQL must be installed and running on your machine.
+
+**Arch Linux:**
+```bash
+sudo pacman -S postgresql
+sudo -iu postgres initdb --locale en_US.UTF-8 -D /var/lib/postgres/data
+sudo systemctl start postgresql
+sudo systemctl enable postgresql
+```
+
+**Debian/Ubuntu:**
+```bash
+sudo apt update && sudo apt install postgresql postgresql-client
+sudo systemctl start postgresql
+sudo systemctl enable postgresql
+```
+
+### Step 1: Create the database user and database
+
+```bash
+sudo -iu postgres createuser --superuser eger
+sudo -iu postgres createdb -O eger dbm_nca_ph
+```
+
+If you want to use the default `postgres` user instead (matching `DATABASE_URL` in config):
+
+```bash
+sudo -iu postgres psql -c "ALTER USER postgres PASSWORD 'postgres';"
+sudo -iu postgres createdb -O postgres dbm_nca_ph
+```
+
+### Step 2: Verify connection
+
+```bash
+psql -U postgres -h localhost -d dbm_nca_ph -c "SELECT 1;"
+```
+
+If you get `Peer authentication failed`, edit `pg_hba.conf`:
+
+```bash
+sudo -iu postgres psql -c "SHOW hba_file;"
+# Edit the file, change "peer" to "md5" for 127.0.0.1/32 and ::1/128 lines
+sudo systemctl restart postgresql
+```
+
+### Step 3: Update `.env`
+
+Add or update your `.env` file:
+
+```
+DATABASE_URL=postgresql+asyncpg://postgres:postgres@localhost:5432/dbm_nca_ph
+```
+
+### Step 4: Initialize Alembic and create tables
+
+```bash
+alembic init alembic
+# Configure alembic.ini with the DATABASE_URL
+alembic revision --autogenerate -m "initial schema"
+alembic upgrade head
+```
+
+Or use the models directly to create tables (simpler):
+
+```python
+# scripts/create_tables.py
+import asyncio
+from src.infrastructure.db.database import engine
+from src.infrastructure.db.models import Base
+
+
+async def main():
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+    print("Tables created successfully.")
+
+
+asyncio.run(main())
+```
+
+### Step 5: Verify tables
+
+```bash
+psql -U postgres -h localhost -d dbm_nca_ph -c "\dt"
+```
+
+Should show: `release`, `record`, `allocation`.
 
 ---
 
