@@ -90,7 +90,7 @@ src/
 - [x] **PH8**: Create `PostgresAllocationRepository`
 - [x] **PH9**: Create `dependencies_v2.py`
 - [x] **PH10**: Create v2 routes (`presentation/api/v2/routers/`)
-- [ ] **PH11**: Register v2 router in `main.py`
+- [x] **PH11**: Register v2 router in `main.py`
 - [ ] **PH12**: Docker Compose for local Postgres
 - [ ] **PH13**: Seed script (`scripts/seed.py`)
 - [ ] **PH14**: Run tests + verify no regressions
