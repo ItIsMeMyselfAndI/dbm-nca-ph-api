@@ -7,9 +7,11 @@ from slowapi.middleware import SlowAPIMiddleware
 from slowapi.util import get_remote_address
 
 from src.presentation.api import v1
+from src.presentation.api import v2
 
 app = FastAPI(title="Philippine DBM NCA API")
 app.include_router(v1.router, prefix="/api")
+app.include_router(v2.router, prefix="/api")
 
 app.add_middleware(SlowAPIMiddleware)
 app.add_middleware(
