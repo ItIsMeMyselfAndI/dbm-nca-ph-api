@@ -1,0 +1,250 @@
+# Plan: Local PostgreSQL via API Versioning (v1 Supabase ↔ v2 Postgres)
+
+## Overview
+
+Add a local PostgreSQL backend via **API versioning** — v1 continues with Supabase untouched, v2 introduces async Postgres via SQLAlchemy. Both share entities and interfaces. No breaking changes.
+
+---
+
+## 1. Problem / Solution / Impact / Goal
+
+| Problem | Solution | Impact | Goal |
+|---------|----------|--------|------|
+| Database is cloud-only (Supabase); every dev session needs network + API keys | Add `DATABASE_URL`-based local Postgres as v2; v1 Supabase stays fully functional | Developers can run offline via v2; CI uses v2 with ephemeral Postgres; v1 remains for prod compatibility | Coexistence: `GET /api/v1/releases` hits Supabase, `GET /api/v2/releases` hits local Postgres |
+| Supabase SDK is REST-based — no connection pooling, prepared statements, or raw SQL | v2 uses SQLAlchemy 2.0 async + asyncpg — pooling, prepared statements, full SQL | 10-100x faster local queries; production still uses Supabase REST via v1 | v2 queries run at sub-5ms locally vs 50-200ms Supabase REST |
+| Repository implementations are hard-coupled to Supabase `.eq()/.gt()` builder | New `Postgres*Repository` classes implement the same Protocols | Zero changes to entities, interfaces, or v1 code | Both v1 and v2 satisfy identical Protocol contracts |
+| No migration tooling — schema managed manually | Alembic for v2 schema versioning | Auditable, reversible, automated schema changes | `alembic upgrade head` creates the full schema |
+| No local dev bootstrap — every new dev needs Supabase account | Docker Compose + seed script | Zero-setup: `docker compose up -d db` + `alembic upgrade head` + `python scripts/seed.py` | Clone → 3 commands → working API |
+
+---
+
+## 2. Architecture
+
+```
+Request
+  ├── /api/v1/*  →  v1 routes (sync)            →  v1 use cases (sync)   →  Supabase repos  →  Supabase PG
+  └── /api/v2/*  →  v2 routes (async, FastAPI)   →  v2 use cases (async)  →  Postgres repos   →  SQLAlchemy → Local PG
+    
+Shared: core/entities/, core/interfaces/, presentation/api/schemas.py
+```
+
+---
+
+## 3. Directory Structure (After)
+
+```
+src/
+├── core/
+│   ├── entities/                       # UNCHANGED
+│   ├── interfaces/                     # UNCHANGED (sync Protocols)
+│   └── use_cases/
+│       ├── v1/                         # MOVED originals here
+│       │   ├── release/
+│       │   ├── record/
+│       │   └── allocation/
+│       └── v2/                         # NEW async use cases
+│           ├── release/
+│           ├── record/
+│           └── allocation/
+├── infrastructure/
+│   └── db/
+│       ├── supabase_client.py          # UNTOUCHED
+│       ├── supabase_release_repo.py    # UNTOUCHED
+│       ├── supabase_record_repo.py     # UNTOUCHED
+│       ├── supabase_allocation_repo.py # UNTOUCHED
+│       ├── database.py                 # NEW: async engine + session
+│       ├── models.py                   # NEW: SQLAlchemy ORM models
+│       ├── postgres_release_repo.py    # NEW
+│       ├── postgres_record_repo.py     # NEW
+│       └── postgres_allocation_repo.py # NEW
+├── presentation/
+│   └── api/
+│       ├── schemas.py                  # UNCHANGED (shared)
+│       ├── dependencies.py             # UNCHANGED (v1 still uses this)
+│       ├── dependencies_v2.py          # NEW: DI for v2
+│       ├── v1/                         # UNTOUCHED (import paths only)
+│       │   └── routers/
+│       │       ├── releases.py
+│       │       ├── records.py
+│       │       └── allocations.py
+│       └── v2/                         # NEW async routes
+│           └── routers/
+│               ├── releases.py
+│               ├── records.py
+│               └── allocations.py
+```
+
+---
+
+## 4. Implementation Checklist (14 items)
+
+- [ ] **PH1**: Restructure use cases - move v1 to `core/use_cases/v1/`, update all imports, delete originals
+- [ ] **PH2**: Create v2 async use cases in `core/use_cases/v2/` with improvements
+- [ ] **PH3**: Add dependencies (`sqlalchemy`, `asyncpg`) + `DATABASE_URL` config
+- [ ] **PH4**: Create `database.py` (async engine + session factory)
+- [ ] **PH5**: Create SQLAlchemy `models.py`
+- [ ] **PH6**: Create `PostgresReleaseRepository`
+- [ ] **PH7**: Create `PostgresRecordRepository`
+- [ ] **PH8**: Create `PostgresAllocationRepository`
+- [ ] **PH9**: Create `dependencies_v2.py`
+- [ ] **PH10**: Create v2 routes (`presentation/api/v2/routers/`)
+- [ ] **PH11**: Register v2 router in `main.py`
+- [ ] **PH12**: Docker Compose for local Postgres
+- [ ] **PH13**: Seed script (`scripts/seed.py`)
+- [ ] **PH14**: Run tests + verify no regressions
+
+---
+
+## 5. Phase 1 Detail — Move v1 Use Cases
+
+### Files to Create (12)
+
+| File | Source |
+|------|--------|
+| `core/use_cases/v1/__init__.py` | Empty |
+| `core/use_cases/v1/release/__init__.py` | Empty |
+| `core/use_cases/v1/release/list_releases.py` | Copy of `core/use_cases/release/list_releases.py` |
+| `core/use_cases/v1/release/get_release_by_id.py` | Copy of original |
+| `core/use_cases/v1/record/__init__.py` | Empty |
+| `core/use_cases/v1/record/list_records.py` | Copy of original |
+| `core/use_cases/v1/record/get_record_by_id.py` | Copy of original |
+| `core/use_cases/v1/record/list_records_by_filter.py` | Copy of original |
+| `core/use_cases/v1/allocation/__init__.py` | Empty |
+| `core/use_cases/v1/allocation/list_allocations.py` | Copy of original |
+| `core/use_cases/v1/allocation/get_allocation_by_id.py` | Copy of original |
+| `core/use_cases/v1/allocation/list_allocations_by_filter.py` | Copy of original |
+
+### Files to Update Imports (10)
+
+| File | Import change |
+|------|--------------|
+| `presentation/api/v1/routers/releases.py` | `v1.release.` prefix (2 lines) |
+| `presentation/api/v1/routers/records.py` | `v1.record.` prefix (3 lines) |
+| `presentation/api/v1/routers/allocations.py` | `v1.allocation.` prefix (3 lines) |
+| `tests/core/use_cases/release/test_list_releases.py` | `v1.release.` prefix |
+| `tests/core/use_cases/release/test_get_release_by_id.py` | `v1.release.` prefix |
+| `tests/core/use_cases/record/test_list_records.py` | `v1.record.` prefix |
+| `tests/core/use_cases/record/test_get_record_by_id.py` | `v1.record.` prefix |
+| `tests/core/use_cases/record/test_list_records_by_filter.py` | `v1.record.` prefix |
+| `tests/core/use_cases/allocation/test_list_allocations.py` | `v1.allocation.` prefix |
+| `tests/core/use_cases/allocation/test_get_allocation_by_id.py` | `v1.allocation.` prefix |
+| `tests/core/use_cases/allocation/test_list_allocations_by_filter.py` | `v1.allocation.` prefix |
+
+### Files to Delete (8)
+
+- `core/use_cases/release/list_releases.py`
+- `core/use_cases/release/get_release_by_id.py`
+- `core/use_cases/record/list_records.py`
+- `core/use_cases/record/get_record_by_id.py`
+- `core/use_cases/record/list_records_by_filter.py`
+- `core/use_cases/allocation/list_allocations.py`
+- `core/use_cases/allocation/get_allocation_by_id.py`
+- `core/use_cases/allocation/list_allocations_by_filter.py`
+
+### Files Left Untouched (critical)
+
+- `core/entities/*.py` — domain models shared by v1 + v2
+- `core/interfaces/*.py` — repository Protocols shared by v1 + v2
+- `core/entities/record_filter.py`, `allocation_filter.py` — filter enums
+- `infrastructure/db/supabase_*` — v1 continues using these
+- `presentation/api/schemas.py` — response schemas shared
+- `presentation/api/dependencies.py` — v1 continues using this
+- `tests/conftest.py` — still overrides v1 DI functions
+- `tests/mock/` — mock repos still implement v1 Protocols
+- `infrastructure/config.py` — unchanged in Phase 1
+- `main.py` — unchanged in Phase 1
+
+---
+
+## 6. Phase 2 Detail — v2 Async Use Cases
+
+### Improvements over v1 (you chose "improve while porting")
+
+1. **Validation-first**: Validate cursor format and bounds *before* any async repo call. v1 calls `get_by_id` to verify cursor exists — wasteful double call.
+2. **Custom exceptions**: `NotFoundError`, `ValidationError` instead of bare `ValueError`.
+3. **Shared cursor helper**: `_compute_next_cursor(items)` extracted once, not inlined 6 times.
+4. **Typed return**: Same `Tuple[List[Entity], str | None]` signature for backward compat.
+
+### What's the same
+
+- Same constructor injection pattern (Protocol in constructor)
+- Same `execute(...)` method name and return types
+- Same validation rules (limit > 0, cursor not empty)
+
+---
+
+## 7. Phases 3-5 Detail — Infrastructure
+
+### Dependencies
+
+```
+sqlalchemy>=2.0.30
+asyncpg>=0.29.0
+alembic>=1.13.0
+```
+
+### `config.py` addition
+
+```python
+DATABASE_URL: str = "postgresql+asyncpg://postgres:postgres@localhost:5432/dbm_nca_ph"
+```
+
+### Models (3 SQLAlchemy tables)
+
+- `ReleaseModel` → `release` table: `id` (text PK), `title`, `filename`, `url`, `year`, `page_count`, timestamps
+- `RecordModel` → `record` table: `id` (uuid PK), `nca_number` (unique), `nca_type`, `department`, `released_date`, `purpose`, `release_id` (FK → release)
+- `AllocationModel` → `allocation` table: `id` (uuid PK), `operating_unit`, `agency`, `amount`, `nca_number` (FK → record)
+
+All with `DateTime(timezone=True)` timestamps, UUID defaults via `gen_random_uuid()`.
+
+### Postgres Repositories (3 files)
+
+Each implements the corresponding Protocol from `core/interfaces/` but with `async def` methods.
+Same cursor-based pagination as Supabase repos.
+
+### Dependency Injection (`dependencies_v2.py`)
+
+```python
+def get_release_repository() -> PostgresReleaseRepository:
+    return PostgresReleaseRepository()
+```
+(Separate from v1's `dependencies.py` — no collision)
+
+### v2 Routes
+
+`async def` handlers calling v2 async use cases. Same request/response schemas as v1.
+Registered at `/api/v2/*` in `main.py`.
+
+---
+
+## 8. Files Untouched (Entire Project)
+
+| Directory/File | Reason |
+|----------------|--------|
+| `core/entities/*.py` | Domain models — database agnostic, shared by v1+v2 |
+| `core/interfaces/*.py` | Protocol contracts — implemented by both Supabase and Postgres repos |
+| `core/entities/record_filter.py` | Shared enum |
+| `core/entities/allocation_filter.py` | Shared enum |
+| `presentation/api/schemas.py` | Response schemas — shared by v1+v2 routes |
+| `presentation/api/dependencies.py` | v1 DI — untouched |
+| `presentation/api/v1/` (routers, not imports) | v1 route logic — untouched, only import paths change |
+| `infrastructure/db/supabase_client.py` | v1 still uses this |
+| `infrastructure/db/supabase_*_repository.py` | v1 still uses these |
+| `infrastructure/config.py` | Untouched in Phase 1; `DATABASE_URL` added later in Phase 3 |
+| `tests/conftest.py` | Overrides v1 DI — untouched |
+| `tests/mock/` | Mock repos implement v1 Protocols — untouched |
+| `main.py` | Untouched until Phase 11 when v2 is registered |
+| `vercel.json` | Deployment config — no change |
+| `requirements.txt` | Untouched until Phase 3 |
+
+---
+
+## 9. Syncing to Server (Target: `eger@100.105.114.70`)
+
+After every commit, sync changed files to the Debian 12 server (32-bit):
+
+```bash
+rsync -avz --delete --exclude '.venv' --exclude '__pycache__' --exclude '.git' --exclude '.pytest_cache' ./ eger@100.105.114.70:/home/eger/projects/dbm-nca-ph-api/
+```
+
+> **Note**: Uses `rsync` (not `scp`) because it handles deletions, respects `.gitignore`-style excludes, and only transfers diffs. Append to every commit message for convenience.
