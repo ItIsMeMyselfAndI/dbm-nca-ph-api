@@ -91,6 +91,41 @@ class PostgresAllocationRepository:
             models = result.scalars().all()
             return [self._to_entity(m) for m in models]
 
+    async def create_allocation(self, allocation: Allocation) -> Allocation:
+        async with async_session() as session:
+            model = AllocationModel(
+                nca_number=allocation.nca_number,
+                agency=allocation.agency,
+                operating_unit=allocation.operating_unit,
+                amount=allocation.amount,
+            )
+            session.add(model)
+            await session.commit()
+            await session.refresh(model)
+            return self._to_entity(model)
+
+    async def update_allocation(self, id: str, allocation: Allocation) -> Allocation | None:
+        async with async_session() as session:
+            model = await session.get(AllocationModel, uuid.UUID(id))
+            if model is None:
+                return None
+            model.nca_number = allocation.nca_number
+            model.agency = allocation.agency
+            model.operating_unit = allocation.operating_unit
+            model.amount = allocation.amount
+            await session.commit()
+            await session.refresh(model)
+            return self._to_entity(model)
+
+    async def delete_allocation(self, id: str) -> bool:
+        async with async_session() as session:
+            model = await session.get(AllocationModel, uuid.UUID(id))
+            if model is None:
+                return False
+            await session.delete(model)
+            await session.commit()
+            return True
+
     def _to_entity(self, model: AllocationModel) -> Allocation:
         return Allocation(
             id=str(model.id),

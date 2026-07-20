@@ -32,6 +32,44 @@ class PostgresReleaseRepository:
             models = result.scalars().all()
             return [self._to_entity(m) for m in models]
 
+    async def create_release(self, release: Release) -> Release:
+        async with async_session() as session:
+            model = ReleaseModel(
+                id=release.id,
+                title=release.title,
+                url=release.url,
+                filename=release.filename,
+                year=release.year,
+                page_count=release.page_count,
+            )
+            session.add(model)
+            await session.commit()
+            await session.refresh(model)
+            return self._to_entity(model)
+
+    async def update_release(self, id: str, release: Release) -> Release | None:
+        async with async_session() as session:
+            model = await session.get(ReleaseModel, id)
+            if model is None:
+                return None
+            model.title = release.title
+            model.url = release.url
+            model.filename = release.filename
+            model.year = release.year
+            model.page_count = release.page_count
+            await session.commit()
+            await session.refresh(model)
+            return self._to_entity(model)
+
+    async def delete_release(self, id: str) -> bool:
+        async with async_session() as session:
+            model = await session.get(ReleaseModel, id)
+            if model is None:
+                return False
+            await session.delete(model)
+            await session.commit()
+            return True
+
     def _to_entity(self, model: ReleaseModel) -> Release:
         return Release(
             id=model.id,
