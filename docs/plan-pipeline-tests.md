@@ -2,33 +2,37 @@
 
 ## 1. Context & Objectives
 * **User Intent:** Ensure the 6 new pipeline CUD endpoints (upsert/delete for Release, Record, Allocation) are thoroughly tested before deployment to catch regressions and edge cases.
-* **Goal:** Create a complete test suite mirroring the existing v2 read-side test structure, covering both the **core/use-case layer** (unit) and **presentation/router layer** (integration via `TestClient`), plus the required **mock repository CUD methods**.
-* **Current Implementation:** Mock async repositories (`MockAsync*Repository`) only implement read methods (get_by_id, list, list_by_filter). No CUD tests exist. No pipelines tests exist.
-* **Target Implementation:** CUD methods are added to all 3 mock async repositories. A full test suite exists at both the use-case and router layer, covering all success paths, failure paths, and edge cases documented below.
+* **Goal:** Create a complete test suite mirroring the existing test structure — CUD tests live under **v2** only (since pipeline is v2-only), while **v1** gets empty pipeline folders as placeholders. Mock CUD methods belong to the v2 async mocks only.
+* **Current Implementation:** Mock async repositories (`MockAsync*Repository`) under `tests/mock/repositories_async/` only implement read methods. v1 sync mocks under `tests/mock/repositories/` are read-only. No CUD or pipeline tests exist in either version.
+* **Target Implementation:** 
+  - CUD methods (`create_*`, `update_*`, `delete_*`) added to `tests/mock/repositories_async/` (v2 only). v1 mocks remain read-only.
+  - v2 gets full test suite at use-case and router layers.
+  - v1 gets empty `pipeline/` directories (just `__init__.py`) as placeholders.
 
 ## 2. Issue Mapping
 
 | Problem / Gap | Proposed Solution | Specific Fix / Implementation Detail |
 | :--- | :--- | :--- |
-| Mocks lack CUD methods | Add `create_*`, `update_*`, `delete_*` to all 3 `MockAsync*Repository` classes | Each method mutates the in-memory list to simulate a real DB |
+| Mocks lack CUD methods | Add `create_*`, `update_*`, `delete_*` to all 3 `MockAsync*Repository` classes | Only in `tests/mock/repositories_async/` (v2). v1 `tests/mock/repositories/` left read-only |
 | Pipeline router requires `X-API-Key` | Override `require_pipeline_key` dep in `tests/v2/conftest.py` to a no-op | Keep auth tests separate; router tests don't need key |
 | Router tests share mutable mock state | Each test file that mutates state overrides its own fresh mock repos via `app.dependency_overrides` | Follow FastAPI pattern — avoid cross-test pollution |
 | UpsertRecord uses `list_records_by_filter(NCA_NUMBER)` | Mock must support `NCA_NUMBER` filter | Already supported in the `RecordFilter` enum |
 | UpsertAllocation uses composite key (agency+ou) | Mock must filter by both fields after NCA_NUMBER filter | Implement by iterating existing results |
 | DeleteRelease must find records by release_id | Mock must support `RELEASE_ID` filter | Already supported in `RecordFilter` enum |
-| No existing pipeline use-case or router test dirs | Create new `pipeline/` subdirectories in both `core/use_cases/` and `presentation/api/routers/` | Follow existing naming conventions |
+| v1 has no pipeline tests | Create empty `pipeline/` directories under `tests/v1/` | Placeholder `__init__.py` only |
 
 ## 3. Scope & File Modifications
 
-### Modified Files
+### Modified Files (v2 mocks — CUD methods added)
 | File Path | Planned Changes | Reason |
 | :--- | :--- | :--- |
 | `tests/mock/repositories_async/mock_async_release_repository.py` | Add `create_release`, `update_release`, `delete_release` methods | Mock CUD for pipeline use-case tests |
 | `tests/mock/repositories_async/mock_async_record_repository.py` | Add `create_record`, `update_record`, `delete_record` methods | Mock CUD for pipeline use-case tests |
 | `tests/mock/repositories_async/mock_async_allocation_repository.py` | Add `create_allocation`, `update_allocation`, `delete_allocation` methods | Mock CUD for pipeline use-case tests |
 | `tests/v2/conftest.py` | Add override for `require_pipeline_key` (no-op) | Allow router tests without API key |
+| `tests/mock/repositories/mock_async_release_repository.py` | **Untouched** | v1 remains read-only |
 
-### New Files — Core/Use Case Tests (unit)
+### New Files — v2 Core/Use Case Tests (unit)
 | File Path | What It Tests |
 | :--- | :--- |
 | `tests/v2/core/use_cases/pipeline/__init__.py` | Empty package init |
@@ -39,7 +43,7 @@
 | `tests/v2/core/use_cases/pipeline/test_upsert_allocation.py` | UpsertAllocation: create new, update by composite key (agency+ou), multiple nca_allocations |
 | `tests/v2/core/use_cases/pipeline/test_delete_allocation.py` | DeleteAllocation: found, not found |
 
-### New Files — Presentation/Router Tests (integration)
+### New Files — v2 Presentation/Router Tests (integration)
 | File Path | What It Tests |
 | :--- | :--- |
 | `tests/v2/presentation/api/routers/pipeline/__init__.py` | Empty package init |
@@ -51,62 +55,112 @@
 | `tests/v2/presentation/api/routers/pipeline/test_upsert_allocation.py` | POST `/pipeline/allocations` — 201 create, 200 update, 422 validation |
 | `tests/v2/presentation/api/routers/pipeline/test_delete_allocation.py` | DELETE `/pipeline/allocations/{id}` — 204 success, 404 not found |
 
+### New Files — v1 Placeholders (empty)
+| File Path | Content |
+| :--- | :--- |
+| `tests/v1/core/use_cases/pipeline/__init__.py` | Empty (v1 has no pipeline CUD) |
+| `tests/v1/presentation/api/routers/pipeline/__init__.py` | Empty (v1 has no pipeline CUD) |
+
 ### Excluded Files (Analyzed but untouched)
 | File Path | Reason for Not Changing |
 | :--- | :--- |
-| `tests/v2/core/use_cases/*` (existing read tests) | Unrelated to pipeline — read tests not modified |
-| `tests/v2/presentation/api/routers/{release,record,allocation}/*` | Unrelated to pipeline — read tests not modified |
+| `tests/v2/core/use_cases/{allocation,record,release}/*` | Existing read tests — unrelated |
+| `tests/v2/presentation/api/routers/{allocation,record,release}/*` | Existing read tests — unrelated |
+| `tests/v1/` (all existing read tests) | v1 is read-only; no pipeline changes |
+| `tests/mock/repositories/` (v1 sync mocks) | Read-only — no CUD added to v1 mocks |
 | `src/core/use_cases/v2/pipeline/*` | Production code — tested, not modified |
 | `src/presentation/api/v2/routers/pipeline.py` | Production code — tested, not modified |
-| `tests/mock/data/*.json` | Test data unchanged — CUD tests operate on existing data or add new records in-memory |
+| `tests/mock/data/*.json` | Test data unchanged |
 
 ## 4. Execution Plan
 
+### Version Architecture
+
+```
+tests/
+├── mock/
+│   ├── repositories/              ← v1 (sync, read-only — NO CUD methods)
+│   │   ├── mock_release_repository.py
+│   │   ├── mock_record_repository.py
+│   │   └── mock_allocation_repository.py
+│   ├── repositories_async/        ← v2 (async — has CUD methods for pipeline)
+│   │   ├── mock_async_release_repository.py
+│   │   ├── mock_async_record_repository.py
+│   │   └── mock_async_allocation_repository.py
+│   └── data/
+├── v1/
+│   ├── core/use_cases/
+│   │   ├── allocation/            ← read tests only
+│   │   ├── record/                ← read tests only
+│   │   ├── release/               ← read tests only
+│   │   └── pipeline/              ← EMPTY (v1 has no pipeline)
+│   ├── presentation/api/routers/
+│   │   ├── allocation/            ← read tests only
+│   │   ├── record/                ← read tests only
+│   │   ├── release/               ← read tests only
+│   │   └── pipeline/              ← EMPTY (v1 has no pipeline)
+│   └── ...
+└── v2/
+    ├── core/use_cases/
+    │   ├── allocation/            ← read tests only
+    │   ├── record/                ← read tests only
+    │   ├── release/               ← read tests only
+    │   └── pipeline/              ← CUD tests (6 files)
+    ├── presentation/api/routers/
+    │   ├── allocation/            ← read tests only
+    │   ├── record/                ← read tests only
+    │   ├── release/               ← read tests only
+    │   └── pipeline/              ← CUD + auth tests (7 files)
+    └── ...
+```
+
 ### Phase Breakdown
-* **Phase 1:** Add CUD methods to all 3 mock async repositories + conftest auth bypass
-* **Phase 2:** Create core/use-case pipeline tests (6 test files)
-* **Phase 3:** Create presentation/router pipeline tests (8 test files: 1 auth + 6 endpoint + 1 __init__)
+* **Phase 1:** Add CUD methods to v2 mock async repos + conftest auth bypass + create v1 empty pipeline dirs
+* **Phase 2:** Create v2 core/use-case pipeline tests (6 test files)
+* **Phase 3:** Create v2 presentation/router pipeline tests (8 test files: 1 auth + 6 endpoint + 1 __init__)
 * **Phase 4:** Run full test suite and fix any failures
 
 ### Phase Elaboration
-* **Phase 1:** Each mock repo gets mutable `create_*`, `update_*`, `delete_*` methods that modify `self.releases`/`self.records`/`self.allocations` in-memory lists. The conftest gets an override for `require_pipeline_key` turning it into a no-op.
-* **Phase 2:** 6 use-case test files following the exact pattern of existing read-side tests: `@pytest.mark.asyncio`, per-file `repo`/`use_case` fixtures, `pytest.raises(NotFoundError)`. Edge cases include: create vs update discrimination, not-found deletes, normalization of IDs, composite key matching for allocations.
-* **Phase 3:** 7 router test files + 1 `__init__.py` following the exact pattern of existing read-side router tests: `client` fixture injection, HTTP status assertions, JSON body assertions. Auth test covers missing header, wrong key, empty key (401). Pipeline tests use `client` fixture (with auth bypassed) and fresh mock repos injected per test file to avoid state pollution. Each test file overrides its own dependencies.
+* **Phase 1:** Each v2 mock repo gets mutable `create_*`, `update_*`, `delete_*` methods. v1 mocks stay read-only. The v2 conftest gets an override for `require_pipeline_key`. Two empty v1 pipeline folders are created as placeholders.
+* **Phase 2:** 6 use-case test files following the exact pattern of existing read-side tests: `@pytest.mark.asyncio`, per-file `repo`/`use_case` fixtures, `pytest.raises(NotFoundError)`.
+* **Phase 3:** 7 router test files + 1 `__init__.py` following the exact pattern of existing read-side router tests: `client` fixture injection, HTTP status assertions, JSON body assertions.
 * **Phase 4:** Run `pytest tests/v2/ -v` and fix any failing tests. Verify no existing tests break.
 
 ### Phase Status & Checklist
 
-**Phase 1: Mock CUD Methods + Conftest Auth** — Status: ⏳ Pending
-- [ ] Add `create_release`, `update_release`, `delete_release` to `MockAsyncReleaseRepository`
-- [ ] Add `create_record`, `update_record`, `delete_record` to `MockAsyncRecordRepository`
-- [ ] Add `create_allocation`, `update_allocation`, `delete_allocation` to `MockAsyncAllocationRepository`
-- [ ] Add `require_pipeline_key` override to `tests/v2/conftest.py`
+**Phase 1: Mock CUD + Conftest + v1 Placeholders** — Status: ✅ Done
+- [x] Add `create_release`, `update_release`, `delete_release` to `MockAsyncReleaseRepository` (v2 only)
+- [x] Add `create_record`, `update_record`, `delete_record` to `MockAsyncRecordRepository` (v2 only)
+- [x] Add `create_allocation`, `update_allocation`, `delete_allocation` to `MockAsyncAllocationRepository` (v2 only)
+- [x] Add `require_pipeline_key` override to `tests/v2/conftest.py`
+- [x] Create `tests/v1/core/use_cases/pipeline/__init__.py` (empty)
+- [x] Create `tests/v1/presentation/api/routers/pipeline/__init__.py` (empty)
 
-**Phase 2: Core/Use Case Pipeline Tests** — Status: ⏳ Pending
-- [ ] Create `tests/v2/core/use_cases/pipeline/__init__.py`
-- [ ] Create `tests/v2/core/use_cases/pipeline/test_upsert_release.py`
-- [ ] Create `tests/v2/core/use_cases/pipeline/test_delete_release.py`
-- [ ] Create `tests/v2/core/use_cases/pipeline/test_upsert_record.py`
-- [ ] Create `tests/v2/core/use_cases/pipeline/test_delete_record.py`
-- [ ] Create `tests/v2/core/use_cases/pipeline/test_upsert_allocation.py`
-- [ ] Create `tests/v2/core/use_cases/pipeline/test_delete_allocation.py`
+**Phase 2: v2 Core/Use Case Pipeline Tests** — Status: ✅ Done
+- [x] Create `tests/v2/core/use_cases/pipeline/__init__.py`
+- [x] Create `tests/v2/core/use_cases/pipeline/test_upsert_release.py`
+- [x] Create `tests/v2/core/use_cases/pipeline/test_delete_release.py`
+- [x] Create `tests/v2/core/use_cases/pipeline/test_upsert_record.py`
+- [x] Create `tests/v2/core/use_cases/pipeline/test_delete_record.py`
+- [x] Create `tests/v2/core/use_cases/pipeline/test_upsert_allocation.py`
+- [x] Create `tests/v2/core/use_cases/pipeline/test_delete_allocation.py`
 
-**Phase 3: Presentation/Router Pipeline Tests** — Status: ⏳ Pending
-- [ ] Create `tests/v2/presentation/api/routers/pipeline/__init__.py`
-- [ ] Create `tests/v2/presentation/api/routers/pipeline/test_auth.py`
-- [ ] Create `tests/v2/presentation/api/routers/pipeline/test_upsert_release.py`
-- [ ] Create `tests/v2/presentation/api/routers/pipeline/test_delete_release.py`
-- [ ] Create `tests/v2/presentation/api/routers/pipeline/test_upsert_record.py`
-- [ ] Create `tests/v2/presentation/api/routers/pipeline/test_delete_record.py`
-- [ ] Create `tests/v2/presentation/api/routers/pipeline/test_upsert_allocation.py`
-- [ ] Create `tests/v2/presentation/api/routers/pipeline/test_delete_allocation.py`
+**Phase 3: v2 Presentation/Router Pipeline Tests** — Status: ✅ Done
+- [x] Create `tests/v2/presentation/api/routers/pipeline/__init__.py`
+- [x] Create `tests/v2/presentation/api/routers/pipeline/test_auth.py`
+- [x] Create `tests/v2/presentation/api/routers/pipeline/test_upsert_release.py`
+- [x] Create `tests/v2/presentation/api/routers/pipeline/test_delete_release.py`
+- [x] Create `tests/v2/presentation/api/routers/pipeline/test_upsert_record.py`
+- [x] Create `tests/v2/presentation/api/routers/pipeline/test_delete_record.py`
+- [x] Create `tests/v2/presentation/api/routers/pipeline/test_upsert_allocation.py`
+- [x] Create `tests/v2/presentation/api/routers/pipeline/test_delete_allocation.py`
 
-**Phase 4: Verification** — Status: ⏳ Pending
-- [ ] Run `pytest tests/v2/ -v` to execute all new and existing tests
-- [ ] Fix any failures
-- [ ] Confirm existing tests still pass
+**Phase 4: Verification** — Status: ✅ Done
+- [x] Run `pytest tests/v2/ -v` — 180 passed
+- [x] Fix all failures (12 issues fixed: auth header, status codes, mock update id, missing awaits)
+- [x] Update `test_record_filter` for new `NCA_NUMBER` enum member
+- [x] Confirm v1 tests unchanged (28 pre-existing failures unrelated)```
 
-## 5. Test Case Catalog
 
 ### Core Use Case Tests
 
