@@ -6,3 +6,4 @@ class RecordFilter(Enum):
     NCA_TYPE = "nca_type"
     RELEASE_ID = "release_id"
     RELEASED_DATE = "released_date"
+    NCA_NUMBER = "nca_number"
