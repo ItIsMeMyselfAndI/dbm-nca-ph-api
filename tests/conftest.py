@@ -1,7 +1,10 @@
 import os
 
 os.environ.setdefault("ASYNC_POOL_DISABLED", "1")
-os.environ.setdefault("DATABASE_URL", "postgresql+asyncpg://postgres:eger@localhost:5432/dbm_nca_ph_test")
+os.environ.setdefault("PSQL_HOST", "localhost")
+os.environ.setdefault("PSQL_USER", "postgres")
+os.environ.setdefault("PSQL_PASS", "postgres")
+os.environ.setdefault("PSQL_DB_NAME", "dbm_nca_ph_test")
 os.environ.setdefault("PIPELINE_API_KEY", "test-api-key-123")
 os.environ.setdefault("SUPABASE_URL", "http://test.local")
 os.environ.setdefault("SUPABASE_ANON_KEY", "test-anon-key")

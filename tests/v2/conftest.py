@@ -1,5 +1,4 @@
 import os
-from urllib.parse import urlparse
 
 import asyncpg
 import pytest
@@ -9,16 +8,12 @@ os.environ.setdefault("PIPELINE_API_KEY", "test-api-key-123")
 
 from main import app
 
-TEST_DB_NAME = "dbm_nca_ph_test"
 BASE_DB = "postgres"
-
-_DEFAULT_DATABASE_URL = "postgresql+asyncpg://postgres:postgres@localhost:5432/dbm_nca_ph"
-_DATABASE_URL = os.environ.get("DATABASE_URL", _DEFAULT_DATABASE_URL)
-_parsed = urlparse(_DATABASE_URL.replace("+asyncpg", ""))
-_USER = _parsed.username or "postgres"
-_PASS = _parsed.password or ""
-_HOST = _parsed.hostname or "localhost"
-_PORT = _parsed.port or 5432
+TEST_DB_NAME = os.environ.get("PSQL_TEST_DB_NAME", "dbm_nca_ph_test")
+_USER = os.environ.get("PSQL_USER", "postgres")
+_PASS = os.environ.get("PSQL_PASS", "postgres")
+_HOST = os.environ.get("PSQL_HOST", "localhost")
+_PORT = 5432
 
 
 def _admin_url(db_name=BASE_DB):
