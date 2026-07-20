@@ -7,12 +7,13 @@ from fastapi.testclient import TestClient
 os.environ.setdefault("PIPELINE_API_KEY", "test-api-key-123")
 
 from main import app
+from src.infrastructure.config import settings
 
 BASE_DB = "postgres"
 TEST_DB_NAME = os.environ.get("PSQL_TEST_DB_NAME", "dbm_nca_ph_test")
-_USER = os.environ.get("PSQL_USER", "postgres")
-_PASS = os.environ.get("PSQL_PASS", "postgres")
-_HOST = os.environ.get("PSQL_HOST", "localhost")
+_USER = settings.PSQL_USER
+_PASS = settings.PSQL_PASS
+_HOST = settings.PSQL_HOST
 _PORT = 5432
 
 
