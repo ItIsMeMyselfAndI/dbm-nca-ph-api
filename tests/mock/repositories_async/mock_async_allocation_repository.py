@@ -44,3 +44,21 @@ class MockAsyncAllocationRepository:
         key, value = list(filter.items())[0]
         allocations = [a for a in allocations if getattr(a, key.value) == value]
         return allocations[:limit]
+
+    async def create_allocation(self, allocation: Allocation) -> Allocation:
+        self.allocations.append(allocation)
+        return allocation
+
+    async def update_allocation(self, id: str, allocation: Allocation) -> Allocation | None:
+        for i, a in enumerate(self.allocations):
+            if a.id == id:
+                self.allocations[i] = allocation
+                return allocation
+        return None
+
+    async def delete_allocation(self, id: str) -> bool:
+        for i, a in enumerate(self.allocations):
+            if a.id == id:
+                self.allocations.pop(i)
+                return True
+        return False

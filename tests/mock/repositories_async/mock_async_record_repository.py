@@ -44,3 +44,21 @@ class MockAsyncRecordRepository:
         key, value = list(filter.items())[0]
         records = [r for r in records if getattr(r, key.value) == value]
         return records[:limit]
+
+    async def create_record(self, record: Record) -> Record:
+        self.records.append(record)
+        return record
+
+    async def update_record(self, id: str, record: Record) -> Record | None:
+        for i, r in enumerate(self.records):
+            if r.id == id:
+                self.records[i] = record
+                return record
+        return None
+
+    async def delete_record(self, id: str) -> bool:
+        for i, r in enumerate(self.records):
+            if r.id == id:
+                self.records.pop(i)
+                return True
+        return False

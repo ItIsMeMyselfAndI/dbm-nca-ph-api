@@ -5,7 +5,7 @@ class Settings(BaseSettings):
     SUPABASE_URL: str
     SUPABASE_ANON_KEY: str
     DATABASE_URL: str = "postgresql+asyncpg://postgres:postgres@localhost:5432/dbm_nca_ph"
-    PIPELINE_API_KEY: str = "dev-secret"
+    PIPELINE_API_KEY: str
 
     class Config:
         env_file = ".env"
