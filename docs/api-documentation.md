@@ -86,19 +86,19 @@ Backend: **PostgreSQL** via SQLAlchemy + `asyncpg`
 | `GET` | `/api/v2/allocations/{filter_key}/{filter_value}` | List allocations by filter |
 | `GET` | `/api/v2/docs` | Swagger UI |
 
-### v2 Pipeline (Authenticated) — `/api/v2/pipeline/`
-Restricted write endpoints for automated data ingestion. All endpoints require the `X-API-Key` header.
+### v2 Private (Authenticated) — `/api/v2/private/`
+Restricted write endpoints for automated data ingestion from trusted clients (local pipeline, LAN, or self-hosted). All endpoints require the `X-API-Key` header.
 
 **Authentication**: `X-API-Key: <secret>` header validated against `PIPELINE_API_KEY` env var. Returns `401 Unauthorized` on mismatch.
 
 | Method | Path | Description |
 |--------|------|-------------|
-| `POST` | `/api/v2/pipeline/releases` | Upsert a release (by `id`) |
-| `DELETE` | `/api/v2/pipeline/releases/{id}` | Delete a release and cascade records/allocations |
-| `POST` | `/api/v2/pipeline/records` | Upsert a record (by `nca_number`) |
-| `DELETE` | `/api/v2/pipeline/records/{nca_number}` | Delete a record and cascade allocations |
-| `POST` | `/api/v2/pipeline/allocations` | Upsert an allocation (by composite key `nca_number` + `agency` + `operating_unit`) |
-| `DELETE` | `/api/v2/pipeline/allocations/{id}` | Delete an allocation |
+| `POST` | `/api/v2/private/releases` | Upsert a release (by `id`) |
+| `DELETE` | `/api/v2/private/releases/{id}` | Delete a release and cascade records/allocations |
+| `POST` | `/api/v2/private/records` | Upsert a record (by `nca_number`) |
+| `DELETE` | `/api/v2/private/records/{nca_number}` | Delete a record and cascade allocations |
+| `POST` | `/api/v2/private/allocations` | Upsert an allocation (by composite key `nca_number` + `agency` + `operating_unit`) |
+| `DELETE` | `/api/v2/private/allocations/{id}` | Delete an allocation |
 
 #### Upsert Semantics
 - **Release**: If a release with the given `id` exists, it is updated; otherwise, a new release is created.

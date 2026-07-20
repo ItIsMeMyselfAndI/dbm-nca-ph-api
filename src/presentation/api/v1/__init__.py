@@ -1,8 +1,8 @@
 from fastapi import APIRouter
 
-from src.presentation.api.v1.routers.releases import router as releases_router
-from src.presentation.api.v1.routers.records import router as records_router
-from src.presentation.api.v1.routers.allocations import router as allocations_router
+from src.presentation.api.v1.routers.public.releases import router as releases_router
+from src.presentation.api.v1.routers.public.records import router as records_router
+from src.presentation.api.v1.routers.public.allocations import router as allocations_router
 
 router = APIRouter(prefix="/v1")
 
