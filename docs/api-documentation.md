@@ -2,16 +2,24 @@
 
 ## Overview
 
-A FastAPI application that serves Philippine DBM (Department of Budget and Management) Notice of Cash Allocation (NCA) data. Built with Clean Architecture, it exposes both a synchronous (v1) and asynchronous (v2) API over identical endpoint surfaces.
+A FastAPI application that serves Philippine DBM (Department of Budget and Management) Notice of Cash Allocation (NCA) data. Built with Clean Architecture, it exposes both a synchronous (v1) and asynchronous (v2) API over identical read endpoint surfaces, plus a set of authenticated write endpoints.
 
 ## Architecture
 
 ```
+main.py                          Application entry point
 src/
   core/             Domain layer (entities, use cases, interfaces, exceptions)
   infrastructure/   Data layer (Supabase repos, PostgreSQL repos, ORM models)
   presentation/     Presentation layer (FastAPI routers, Pydantic schemas, DI)
-main.py            Application entry point
+    api/
+      v1/
+        routers/
+          public/   Read-only endpoints (list, get-by-id, filter)
+      v2/
+        routers/
+          public/   Read-only endpoints (async)
+          private/  Write endpoints (create, update, delete) — auth at package level
 ```
 
 **Dependency rule**: Presentation depends on Core. Infrastructure implements Core interfaces.
@@ -89,7 +97,7 @@ Backend: **PostgreSQL** via SQLAlchemy + `asyncpg`
 ### v2 Private (Authenticated) — `/api/v2/private/`
 Restricted write endpoints for automated data ingestion from trusted clients (local pipeline, LAN, or self-hosted). All endpoints require the `X-API-Key` header.
 
-**Authentication**: `X-API-Key: <secret>` header validated against `PIPELINE_API_KEY` env var. Returns `401 Unauthorized` on mismatch.
+**Authentication**: `X-API-Key: <secret>` header validated against `PIPELINE_API_KEY` env var. Returns `401 Unauthorized` on missing or invalid key. Auth is applied once at the `private/` package level, not per-router.
 
 | Method | Path | Description |
 |--------|------|-------------|
@@ -153,6 +161,19 @@ Restricted write endpoints for automated data ingestion from trusted clients (lo
 |--------|------|-------------|
 | `GET` | `/` | Health check → `{"message": "API is running", "docs": "/docs"}` |
 | `GET` | `/docs` | Swagger UI (redirects to `/api/v1/docs`) |
+
+## Source Structure
+
+Both v1 and v2 organize route files under a `public/` subdirectory for read endpoints. The v2 version additionally has a `private/` subdirectory for authenticated write endpoints:
+
+```
+src/presentation/api/v2/routers/
+  public/              Read endpoints (no auth)
+    releases.py, records.py, allocations.py
+  private/             Write endpoints (X-API-Key required)
+    __init__.py         Applies require_pipeline_key dependency to all routes
+    releases.py, records.py, allocations.py
+```
 
 ## v1 vs v2 Differences
 

@@ -26,6 +26,7 @@ Available variables:
 | `SUPABASE_URL` | Yes (v1) | Supabase project URL |
 | `SUPABASE_ANON_KEY` | Yes (v1) | Supabase anonymous key |
 | `DATABASE_URL` | Yes (v2) | PostgreSQL connection string for v2 local backend |
+| `PIPELINE_API_KEY` | Yes (v2 private) | API key for authenticated write endpoints (`X-API-Key` header) |
 | `VERCEL_OIDC_TOKEN` | No | Vercel OIDC token (deployment only) |
 
 ## Database Setup
@@ -108,23 +109,90 @@ HOST=192.168.1.100 PORT=9000 python main.py
 
 ## Tests
 
+### v1 Tests (Mock Backend)
+
+No external dependencies — uses in-memory mock repositories:
+
+```bash
+pytest tests/v1/
+```
+
+### v2 Tests (Real PostgreSQL)
+
+Connect to a **local PostgreSQL instance** with a `postgres` superuser role. The test suite automatically:
+
+1. Creates a temporary `dbm_nca_ph_test` database at session start
+2. Creates all tables, runs 135+ tests, then drops the database
+
+```bash
+pytest tests/v2/
+```
+
+To run all tests:
+
 ```bash
 pytest
 ```
 
+**Note**: The test database is created/destroyed per session. Make sure your PostgreSQL is running. The default connection uses `postgres:eger@localhost`.
+
+### Requirements
+
+- v2 tests require a running local PostgreSQL instance
+- v1 tests run standalone with mock data
+
 ## Project Structure
 
 ```
-├── .env.sample                      # Environment variable template
-├── .env.local.sample                # Local env template (Vercel)
-├── main.py                          # Application entry point
-├── src/
-│   ├── core/entities/               # Domain models and filter enums
-│   ├── infrastructure/config.py     # Pydantic settings (env file)
-│   ├── infrastructure/db/           # Supabase repository implementations
-│   └── presentation/api/            # FastAPI routes and dependencies
-└── tests/
-    ├── conftest.py                  # Shared fixtures (test client, repos)
-    ├── infrastructure/db/           # Repository-level tests
-    └── presentation/api/            # API endpoint integration tests
+main.py                          # Application entry point
+pytest.ini                       # Pytest config (asyncio, fixture loop scope)
+.env.sample                      # Environment variable template
+.env.local.sample                # Local env template (Vercel)
+docs/
+  api-documentation.md           # Full API docs
+  plan-restructure-routes.md     # Route restructuring plan
+  plan-pipeline-cud-v2.md        # CUD endpoints plan
+  plan-restructure-tests.md      # Test restructuring plan
+src/
+  core/                          # Domain layer
+    entities/                    #   Domain models: Release, Record, Allocation
+    exceptions/                  #   NotFoundError, ValidationError
+    interfaces/                  #   Repository protocols (sync + async)
+    use_cases/                   #   v1 + v2 business logic
+  infrastructure/
+    config.py                    #   Pydantic settings (env variables)
+    db/
+      database.py                #   SQLAlchemy async engine + session
+      models.py                  #   ORM models
+      postgres_*_repository.py   #   PostgreSQL repo implementations
+      supabase_*_repository.py   #   Supabase repo implementations
+  presentation/
+    api/
+      app.py -> main.py          # FastAPI app (via main.py)
+      auth.py                    # Pipeline API key auth dependency
+      dependencies.py            #   v1 DI
+      dependencies_v2.py         #   v2 DI (real repos)
+      schemas.py                 #   Pydantic request/response schemas
+      v1/                        #   v1 routes (sync, Supabase)
+        routers/
+          public/                #     Read endpoints
+            releases.py, records.py, allocations.py
+      v2/                        #   v2 routes (async, PostgreSQL)
+        routers/
+          public/                #     Read endpoints
+            releases.py, records.py, allocations.py
+          private/               #     Write endpoints (authenticated)
+            __init__.py          #       Auth applied at package level
+            releases.py, records.py, allocations.py
+tests/
+  conftest.py                    # Shared fixtures + env var setup
+  core/                          # Entity unit tests
+  mock/                          # Mock repository implementations
+  v1/                            # v1 tests (mock repos)
+  v2/                            # v2 tests (real PostgreSQL)
+    conftest.py                  #   DB lifecycle, clean_db, seed fixtures
+    core/use_cases/              #   Use case tests
+    presentation/api/routers/
+      public/                    #   Read endpoint tests
+      private/                   #   Write endpoint + auth tests
 ```
