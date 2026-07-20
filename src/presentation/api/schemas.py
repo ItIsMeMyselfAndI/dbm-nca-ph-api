@@ -18,6 +18,15 @@ class ReleaseResponse(BaseModel):
     filename: str
 
 
+class ReleaseCreate(BaseModel):
+    id: str
+    title: str
+    url: str
+    filename: str
+    year: int
+    page_count: int = 0
+
+
 class RecordResponse(BaseModel):
     id: str
     nca_number: str
@@ -28,9 +37,25 @@ class RecordResponse(BaseModel):
     release_id: str
 
 
+class RecordCreate(BaseModel):
+    nca_number: str
+    nca_type: str
+    released_date: str
+    department: str
+    purpose: str
+    release_id: str
+
+
 class AllocationResponse(BaseModel):
     id: str
     nca_number: str  # reference for record
     agency: Optional[str]
     operating_unit: Optional[str]
+    amount: float
+
+
+class AllocationCreate(BaseModel):
+    nca_number: str
+    agency: str
+    operating_unit: str
     amount: float
