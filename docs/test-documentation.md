@@ -119,14 +119,17 @@ A running **local PostgreSQL** instance is required. The test suite:
 
 ### Database Credentials
 
-The test suite uses `asyncpg` to manage the test database directly (not SQLAlchemy). The credentials are derived from the `DATABASE_URL` environment variable:
+The test suite uses `asyncpg` to manage the test database directly (not SQLAlchemy). The credentials are read from individual `PSQL_*` environment variables:
 
-- **Host:** extracted from `DATABASE_URL` (default: `localhost`)
-- **Port:** extracted from `DATABASE_URL` (default: `5432`)
-- **User:** extracted from `DATABASE_URL` (default: `postgres`)
-- **Password:** extracted from `DATABASE_URL` (default: empty)
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `PSQL_HOST` | `localhost` | PostgreSQL host |
+| `PSQL_USER` | `postgres` | PostgreSQL user |
+| `PSQL_PASS` | `postgres` | PostgreSQL password |
+| `PSQL_DB_NAME` | `dbm_nca_ph_test` | Database the API connects to during tests (set by root conftest) |
+| `PSQL_TEST_DB_NAME` | `dbm_nca_ph_test` | Database created/dropped by the test lifecycle |
 
-Make sure the PostgreSQL role used in `DATABASE_URL` has `CREATEDB` privileges (superuser recommended), since the test suite creates and drops databases.
+Make sure the PostgreSQL role has `CREATEDB` privileges (superuser recommended), since the test suite creates and drops databases.
 
 ### Troubleshooting Connection Failures
 
@@ -144,7 +147,7 @@ asyncpg.exceptions.ConnectionDoesNotExistError
 | Cause | Fix |
 |-------|-----|
 | PostgreSQL not running | `sudo systemctl start postgresql` |
-| Wrong credentials in `DATABASE_URL` | Check your `.env` — test suite reads from this variable |
+| Wrong credentials | Check your `.env` — test suite reads `PSQL_USER`, `PSQL_PASS`, `PSQL_HOST` |
 | `peer` auth on Unix socket | Add `host all all 127.0.0.1/32 trust` to `pg_hba.conf` and restart PostgreSQL |
 | Role lacks `CREATEDB` | `sudo -iu postgres psql -c "ALTER ROLE <user> CREATEDB;"` |
 | Test database name conflict | The suite drops/recreates `dbm_nca_ph_test` — ensure no important DB has this name |
@@ -201,7 +204,11 @@ Test use case logic with mock repositories (no DB).
 
 | Variable | Default | Used by | Purpose |
 |----------|---------|---------|---------|
-| `DATABASE_URL` | — | v2 tests | PostgreSQL connection string for test DB management |
+| `PSQL_HOST` | `localhost` | v2 tests | PostgreSQL host |
+| `PSQL_USER` | `postgres` | v2 tests | PostgreSQL user |
+| `PSQL_PASS` | `postgres` | v2 tests | PostgreSQL password |
+| `PSQL_DB_NAME` | `dbm_nca_ph` | v2 tests | PostgreSQL database (overridden to `dbm_nca_ph_test` during tests) |
+| `PSQL_TEST_DB_NAME` | `dbm_nca_ph_test` | v2 tests | PostgreSQL test database name |
 | `PIPELINE_API_KEY` | `test-api-key-123` | v2 private tests | API key for write endpoint auth |
 | `SUPABASE_URL` | `http://test.local` | v1 tests | (v1 only) |
 | `SUPABASE_ANON_KEY` | `test-anon-key` | v1 tests | (v1 only) |

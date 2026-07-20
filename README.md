@@ -25,7 +25,11 @@ Available variables:
 |----------|----------|-------------|
 | `SUPABASE_URL` | Yes (v1) | Supabase project URL |
 | `SUPABASE_ANON_KEY` | Yes (v1) | Supabase anonymous key |
-| `DATABASE_URL` | Yes (v2) | PostgreSQL connection string for v2 local backend |
+| `PSQL_HOST` | Yes (v2) | PostgreSQL host (default: `localhost`) |
+| `PSQL_USER` | Yes (v2) | PostgreSQL user (default: `postgres`) |
+| `PSQL_PASS` | Yes (v2) | PostgreSQL password (default: `postgres`) |
+| `PSQL_DB_NAME` | Yes (v2) | PostgreSQL database name (default: `dbm_nca_ph`) |
+| `PSQL_TEST_DB_NAME` | No | PostgreSQL test database name (default: `dbm_nca_ph_test`) |
 | `PIPELINE_API_KEY` | Yes (v2 private) | API key for authenticated write endpoints (`X-API-Key` header) |
 | `VERCEL_OIDC_TOKEN` | No | Vercel OIDC token (deployment only) |
 
@@ -69,15 +73,15 @@ sudo -iu postgres createdb -O <name> dbm_nca_ph
 
 If `Peer authentication failed`, edit `pg_hba.conf` and change `peer` to `md5` for local lines, then restart PostgreSQL.
 
-**Set `DATABASE_URL` in `.env` (replace `<name>` and `<password>`):**
+**Set env vars in `.env` (replace `<name>` and `<password>`):**
 ```
-DATABASE_URL=postgresql+asyncpg://<name>:<password>@localhost:5432/dbm_nca_ph
+PSQL_HOST=localhost
+PSQL_USER=<name>
+PSQL_PASS=<password>
+PSQL_DB_NAME=dbm_nca_ph
 ```
 
-If you configured trust or peer auth (no password), omit the password:
-```
-DATABASE_URL=postgresql+asyncpg://<name>@localhost:5432/dbm_nca_ph
-```
+If you configured trust or peer auth (no password), omit `PSQL_PASS`.
 
 **Create tables:**
 ```bash
@@ -134,7 +138,7 @@ To run all tests:
 pytest
 ```
 
-**Note**: The test database is created/destroyed per session. Make sure your PostgreSQL is running. The default connection uses `postgres:eger@localhost`.
+**Note**: The test database is created/destroyed per session. Make sure your PostgreSQL is running.
 
 ### Requirements
 
