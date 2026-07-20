@@ -15,8 +15,8 @@ uv pip install -r requirements.txt
 Copy the sample files and fill in your values:
 
 ```bash
-cp .env.sample .env
-cp .env.local.sample .env.local
+cp env.sample .env
+cp env.local.sample .env.local
 ```
 
 Available variables:
@@ -146,8 +146,8 @@ pytest
 ```
 main.py                          # Application entry point
 pytest.ini                       # Pytest config (asyncio, fixture loop scope)
-.env.sample                      # Environment variable template
-.env.local.sample                # Local env template (Vercel)
+env.sample                       # Environment variable template
+env.local.sample                 # Local env template (Vercel)
 docs/
   api-documentation.md           # Full API docs
   plan-restructure-routes.md     # Route restructuring plan
