@@ -123,10 +123,11 @@ pytest tests/v1/
 
 ### v2 Tests (Real PostgreSQL)
 
-Connect to a **local PostgreSQL instance** with a `postgres` superuser role. The test suite automatically:
+Connect to a **local PostgreSQL instance** with a superuser role. The test suite:
 
-1. Creates a temporary `dbm_nca_ph_test` database at session start
-2. Creates all tables, runs 135+ tests, then drops the database
+1. Reads `PSQL_HOST`, `PSQL_USER`, `PSQL_PASS` from your `.env` file (falls back to `postgres`/`postgres`/`localhost`)
+2. Creates a temporary `dbm_nca_ph_test` database at session start
+3. Creates all tables, runs 135+ tests, then drops the database
 
 ```bash
 pytest tests/v2/

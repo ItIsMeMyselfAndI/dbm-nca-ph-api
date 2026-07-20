@@ -119,17 +119,20 @@ A running **local PostgreSQL** instance is required. The test suite:
 
 ### Database Credentials
 
-The test suite uses `asyncpg` to manage the test database directly (not SQLAlchemy). The credentials are read from individual `PSQL_*` environment variables:
+The test suite uses `asyncpg` to manage the test database directly (not SQLAlchemy). Credentials are resolved in this priority:
 
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `PSQL_HOST` | `localhost` | PostgreSQL host |
-| `PSQL_USER` | `postgres` | PostgreSQL user |
-| `PSQL_PASS` | `postgres` | PostgreSQL password |
-| `PSQL_DB_NAME` | `dbm_nca_ph_test` | Database the API connects to during tests (set by root conftest) |
-| `PSQL_TEST_DB_NAME` | `dbm_nca_ph_test` | Database created/dropped by the test lifecycle |
+1. **`.env` file** (loaded via `python-dotenv` in root conftest)
+2. **Hardcoded defaults** (`postgres`/`postgres`/`localhost`)
 
-Make sure the PostgreSQL role has `CREATEDB` privileges (superuser recommended), since the test suite creates and drops databases.
+| Variable | Default | Source | Description |
+|----------|---------|--------|-------------|
+| `PSQL_HOST` | `localhost` | `.env` or fallback | PostgreSQL host |
+| `PSQL_USER` | `postgres` | `.env` or fallback | PostgreSQL user |
+| `PSQL_PASS` | `postgres` | `.env` or fallback | PostgreSQL password |
+| `PSQL_DB_NAME` | `dbm_nca_ph_test` | **Forced** by root conftest | Database the API connects to during tests (uses `PSQL_TEST_DB_NAME` if set) |
+| `PSQL_TEST_DB_NAME` | `dbm_nca_ph_test` | `.env` or fallback | Database created/dropped by the test lifecycle |
+
+**Key detail:** The root `tests/conftest.py` loads `.env` into the process environment, then forces `PSQL_DB_NAME` to the test database name. This ensures the API always connects to the temporary test database regardless of what `.env` specifies. The v2 conftest reads credentials via `settings.PSQL_USER/PASS/HOST` (pydantic `Settings` object), which correctly picks up `.env` values.
 
 ### Troubleshooting Connection Failures
 
@@ -155,11 +158,14 @@ asyncpg.exceptions.ConnectionDoesNotExistError
 ### Verify Setup
 
 ```bash
-# Test that asyncpg can connect
-python -c "
+# Test that asyncpg can connect using your .env credentials
+uv run python -c "
+from src.infrastructure.config import settings
 import asyncpg, asyncio
 async def check():
-    conn = await asyncpg.connect('postgresql://postgres@localhost:5432/postgres')
+    conn = await asyncpg.connect(
+        f'postgresql://{settings.PSQL_USER}:{settings.PSQL_PASS}@{settings.PSQL_HOST}:5432/postgres'
+    )
     print('OK:', await conn.fetchval('SELECT version()'))
     await conn.close()
 asyncio.run(check())
@@ -204,11 +210,11 @@ Test use case logic with mock repositories (no DB).
 
 | Variable | Default | Used by | Purpose |
 |----------|---------|---------|---------|
-| `PSQL_HOST` | `localhost` | v2 tests | PostgreSQL host |
-| `PSQL_USER` | `postgres` | v2 tests | PostgreSQL user |
-| `PSQL_PASS` | `postgres` | v2 tests | PostgreSQL password |
-| `PSQL_DB_NAME` | `dbm_nca_ph` | v2 tests | PostgreSQL database (overridden to `dbm_nca_ph_test` during tests) |
-| `PSQL_TEST_DB_NAME` | `dbm_nca_ph_test` | v2 tests | PostgreSQL test database name |
+| `PSQL_HOST` | `localhost` | v2 tests | PostgreSQL host (from `.env`) |
+| `PSQL_USER` | `postgres` | v2 tests | PostgreSQL user (from `.env`) |
+| `PSQL_PASS` | `postgres` | v2 tests | PostgreSQL password (from `.env`) |
+| `PSQL_DB_NAME` | `dbm_nca_ph_test` | v2 tests | PostgreSQL database — **forced** to test DB during tests |
+| `PSQL_TEST_DB_NAME` | `dbm_nca_ph_test` | v2 tests | PostgreSQL test database name (overridable) |
 | `PIPELINE_API_KEY` | `test-api-key-123` | v2 private tests | API key for write endpoint auth |
 | `SUPABASE_URL` | `http://test.local` | v1 tests | (v1 only) |
 | `SUPABASE_ANON_KEY` | `test-anon-key` | v1 tests | (v1 only) |
