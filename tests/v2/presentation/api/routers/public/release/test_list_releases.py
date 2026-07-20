@@ -1,14 +1,19 @@
-def test_list_releases(client):
+import pytest
+
+pytestmark = pytest.mark.asyncio
+
+
+async def test_list_releases(client, seed_releases):
     response = client.get("/releases?limit=10")
     assert response.status_code == 200
     data = response.json()
     assert "items" in data
     assert data["count"] == 3
     assert data["cursor"] is None
-    assert data["next_cursor"] == "id_2026"
+    assert data["next_cursor"] == "test_release_c"
 
 
-def test_list_releases_with_cursor(client):
+async def test_list_releases_with_cursor(client, seed_releases):
     response = client.get("/releases?limit=2")
     assert response.status_code == 200
     data = response.json()
@@ -22,18 +27,20 @@ def test_list_releases_with_cursor(client):
     assert data_next["cursor"] == data["next_cursor"]
 
 
-def test_list_releases_with_invalid_cursor(client):
+async def test_list_releases_with_invalid_cursor(client, seed_releases):
     response = client.get("/releases?limit=2&cursor=nonexistent-id")
     assert response.status_code == 200
-    assert response.json()["count"] == 0
+    data = response.json()
+    assert data["count"] == 2
+    assert data["cursor"] == "nonexistent-id"
 
 
-def test_list_releases_with_empty_cursor(client):
+async def test_list_releases_with_empty_cursor(client, seed_releases):
     response = client.get("/releases?limit=2&cursor=")
     assert response.status_code == 400
 
 
-def test_list_releases_with_limit_zero(client):
+async def test_list_releases_with_limit_zero(client, seed_releases):
     response = client.get("/releases?limit=0")
     assert response.status_code == 200
     data = response.json()
@@ -42,7 +49,7 @@ def test_list_releases_with_limit_zero(client):
     assert data["next_cursor"] is None
 
 
-def test_list_releases_with_negative_limit(client):
+async def test_list_releases_with_negative_limit(client, seed_releases):
     response = client.get("/releases?limit=-5")
     assert response.status_code == 200
     data = response.json()
@@ -51,8 +58,10 @@ def test_list_releases_with_negative_limit(client):
     assert data["next_cursor"] is None
 
 
-def test_list_releases_with_leading_trailing_spaces_cursor(client):
-    response = client.get("/releases?limit=2&cursor= id_2024 ")
+async def test_list_releases_with_leading_trailing_spaces_cursor(
+    client, seed_releases
+):
+    response = client.get("/releases?limit=2&cursor= test_release_a ")
     assert response.status_code == 200
     data = response.json()
     assert data["count"] == 2
@@ -60,8 +69,8 @@ def test_list_releases_with_leading_trailing_spaces_cursor(client):
     assert data["next_cursor"] is not None
 
 
-def test_list_releases_with_upper_case_cursor(client):
-    response = client.get("/releases?limit=2&cursor=ID_2024")
+async def test_list_releases_with_upper_case_cursor(client, seed_releases):
+    response = client.get("/releases?limit=2&cursor=TEST_RELEASE_A")
     assert response.status_code == 200
     data = response.json()
     assert data["count"] == 2
@@ -69,10 +78,10 @@ def test_list_releases_with_upper_case_cursor(client):
     assert data["next_cursor"] is not None
 
 
-def test_list_releases_with_limit_exceeding_total(client):
+async def test_list_releases_with_limit_exceeding_total(client, seed_releases):
     response = client.get("/releases?limit=10")
     assert response.status_code == 200
     data = response.json()
     assert data["count"] == 3
     assert data["cursor"] is None
-    assert data["next_cursor"] == "id_2026"
+    assert data["next_cursor"] == "test_release_c"

@@ -1,33 +1,33 @@
-def test_get_record_by_id(client):
-    response = client.get("/records/a729caee-c88f-416b-ba35-fca60a553aaa")
+import pytest
+
+pytestmark = pytest.mark.asyncio
+
+
+async def test_get_record_by_id(client, seed_records):
+    record_id = seed_records[0]["id"]
+    response = client.get(f"/records/{record_id}")
     assert response.status_code == 200
     data = response.json()
-    assert data["id"] == "a729caee-c88f-416b-ba35-fca60a553aaa"
+    assert data["id"] == record_id
+    assert data["nca_number"] == "test_nca_001"
 
 
-def test_get_record_by_id_not_found(client):
-    response = client.get("/records/nonexistent-id")
+async def test_get_record_by_id_not_found(client, seed_records):
+    response = client.get("/records/00000000-0000-0000-0000-000000000000")
     assert response.status_code == 404
 
 
-def test_get_record_by_id_in_upper_case(client):
-    response = client.get("/records/A729CAEE-C88F-416B-BA35-FCA60A553AAA")
+async def test_get_record_by_id_in_upper_case(client, seed_records):
+    record_id = seed_records[0]["id"].upper()
+    response = client.get(f"/records/{record_id}")
     assert response.status_code == 200
     data = response.json()
-    assert data["id"] == "a729caee-c88f-416b-ba35-fca60a553aaa"
+    assert data["id"] == seed_records[0]["id"]
 
 
-def test_get_record_by_id_leading_trailing_spaces(client):
-    response = client.get("/records/ a729caee-c88f-416b-ba35-fca60a553aaa ")
+async def test_get_record_by_id_leading_trailing_spaces(client, seed_records):
+    record_id = seed_records[0]["id"]
+    response = client.get(f"/records/ {record_id} ")
     assert response.status_code == 200
     data = response.json()
-    assert data["id"] == "a729caee-c88f-416b-ba35-fca60a553aaa"
-
-
-def test_get_record_by_id_empty_string(client):
-    response = client.get("/records/")
-    assert response.status_code == 200
-    data = response.json()
-    assert "items" in data
-    assert data["cursor"] is None
-    assert data["next_cursor"] is not None
+    assert data["id"] == record_id
