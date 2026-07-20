@@ -29,22 +29,3 @@ class MockAsyncReleaseRepository:
                 return []
             releases = self.releases[idx + 1 :]
         return releases[:limit]
-
-    async def create_release(self, release: Release) -> Release:
-        self.releases.append(release)
-        return release
-
-    async def update_release(self, id: str, release: Release) -> Release | None:
-        for i, r in enumerate(self.releases):
-            if r.id == id:
-                updated = release.model_copy(update={"id": id})
-                self.releases[i] = updated
-                return updated
-        return None
-
-    async def delete_release(self, id: str) -> bool:
-        for i, r in enumerate(self.releases):
-            if r.id == id:
-                self.releases.pop(i)
-                return True
-        return False
