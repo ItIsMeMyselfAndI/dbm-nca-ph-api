@@ -1,6 +1,6 @@
 import uuid
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Response, status
 
 from src.core.entities.allocation import Allocation
 from src.core.entities.record import Record
@@ -29,14 +29,17 @@ router = APIRouter(
 )
 
 
-@router.post("/releases", status_code=status.HTTP_201_CREATED)
+@router.post("/releases")
 async def upsert_release(
     data: ReleaseCreate,
+    response: Response,
     release_repo: AsyncReleaseRepository = Depends(get_release_repository),
 ):
     try:
         use_case = UpsertRelease(release_repo)
-        release = await use_case.execute(Release(**data.model_dump()))
+        release, was_created = await use_case.execute(Release(**data.model_dump()))
+        if was_created:
+            response.status_code = status.HTTP_201_CREATED
         return release
     except NotFoundError as ne:
         raise HTTPException(status_code=404, detail=str(ne))
@@ -60,16 +63,19 @@ async def delete_release(
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.post("/records", status_code=status.HTTP_201_CREATED)
+@router.post("/records")
 async def upsert_record(
     data: RecordCreate,
+    response: Response,
     record_repo: AsyncRecordRepository = Depends(get_record_repository),
 ):
     try:
         use_case = UpsertRecord(record_repo)
-        record = await use_case.execute(
+        record, was_created = await use_case.execute(
             Record(id=str(uuid.uuid4()), **data.model_dump())
         )
+        if was_created:
+            response.status_code = status.HTTP_201_CREATED
         return record
     except NotFoundError as ne:
         raise HTTPException(status_code=404, detail=str(ne))
@@ -92,16 +98,19 @@ async def delete_record(
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.post("/allocations", status_code=status.HTTP_201_CREATED)
+@router.post("/allocations")
 async def upsert_allocation(
     data: AllocationCreate,
+    response: Response,
     allocation_repo: AsyncAllocationRepository = Depends(get_allocation_repository),
 ):
     try:
         use_case = UpsertAllocation(allocation_repo)
-        allocation = await use_case.execute(
+        allocation, was_created = await use_case.execute(
             Allocation(id=str(uuid.uuid4()), **data.model_dump())
         )
+        if was_created:
+            response.status_code = status.HTTP_201_CREATED
         return allocation
     except NotFoundError as ne:
         raise HTTPException(status_code=404, detail=str(ne))

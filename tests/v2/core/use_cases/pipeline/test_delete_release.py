@@ -43,9 +43,9 @@ async def test_delete_release(use_case, release_repo, record_repo):
 
     assert len(release_repo.releases) == initial_release_count - 1
     assert len(record_repo.records) == initial_record_count - len(records_for_release)
-    assert release_repo.get_release_by_id("id_2024") is None
+    assert await release_repo.get_release_by_id("id_2024") is None
     for r in records_for_release:
-        assert record_repo.get_record_by_id(r.id) is None
+        assert await record_repo.get_record_by_id(r.id) is None
 
 
 @pytest.mark.asyncio

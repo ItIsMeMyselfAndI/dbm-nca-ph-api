@@ -29,8 +29,9 @@ async def test_upsert_record_create(use_case, repo):
         purpose="Test purpose",
         release_id="id_2024",
     )
-    result = await use_case.execute(new_record)
+    result, was_created = await use_case.execute(new_record)
     assert result.nca_number == "NCA-TEST-99-0000001"
+    assert was_created is True
     assert len(repo.records) == initial_count + 1
 
 
@@ -48,8 +49,9 @@ async def test_upsert_record_update(use_case, repo):
         purpose="Updated purpose",
         release_id="id_2025",
     )
-    result = await use_case.execute(updated_record)
+    result, was_created = await use_case.execute(updated_record)
     assert result.nca_number == existing_nca
+    assert was_created is False
     updated_in_repo = await repo.get_record_by_id(existing_id)
     assert updated_in_repo is not None
     assert updated_in_repo.department == "Updated Department"
@@ -69,11 +71,12 @@ async def test_upsert_record_update_all_fields(use_case, repo):
         purpose="New purpose",
         release_id="id_2026",
     )
-    result = await use_case.execute(updated)
+    result, was_created = await use_case.execute(updated)
     assert result.released_date == "2026-06-06T00:00:00+00:00"
     assert result.department == "New Dept"
     assert result.purpose == "New purpose"
     assert result.release_id == "id_2026"
+    assert was_created is False
     record = await repo.get_record_by_id(existing_id)
     assert record is not None
     assert record.released_date == "2026-06-06T00:00:00+00:00"
@@ -91,8 +94,9 @@ async def test_upsert_record_multiple_nca_calls(use_case, repo):
         purpose="First purpose",
         release_id="id_2024",
     )
-    result1 = await use_case.execute(record1)
+    result1, was_created1 = await use_case.execute(record1)
     assert result1.nca_number == nca_number
+    assert was_created1 is True
 
     record2 = Record(
         id="uuid-2",
@@ -103,6 +107,7 @@ async def test_upsert_record_multiple_nca_calls(use_case, repo):
         purpose="Second purpose",
         release_id="id_2025",
     )
-    result2 = await use_case.execute(record2)
+    result2, was_created2 = await use_case.execute(record2)
     assert result2.department == "Second"
+    assert was_created2 is False
     assert len([r for r in repo.records if r.nca_number == nca_number]) == 1

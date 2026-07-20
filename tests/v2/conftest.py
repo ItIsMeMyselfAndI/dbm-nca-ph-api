@@ -19,7 +19,7 @@ from tests.mock.repositories_async.mock_async_release_repository import (
 )
 
 
-async def _bypass_pipeline_key() -> None:
+def _bypass_pipeline_key() -> None:
     return None
 
 

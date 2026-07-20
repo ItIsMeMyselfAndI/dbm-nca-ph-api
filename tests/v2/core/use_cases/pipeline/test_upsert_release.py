@@ -28,9 +28,10 @@ async def test_upsert_release_create(use_case, repo):
         year=2026,
         page_count=10,
     )
-    result = await use_case.execute(new_release)
+    result, was_created = await use_case.execute(new_release)
     assert result.id == "new-release-id"
     assert result.title == "New Release"
+    assert was_created is True
     assert len(repo.releases) == initial_count + 1
 
 
@@ -45,10 +46,11 @@ async def test_upsert_release_update(use_case, repo):
         year=2024,
         page_count=99,
     )
-    result = await use_case.execute(updated_release)
+    result, was_created = await use_case.execute(updated_release)
     assert result.id == "id_2024"
     assert result.title == "Updated Title"
     assert result.page_count == 99
+    assert was_created is False
     assert len(repo.releases) == initial_count
 
 
@@ -62,9 +64,10 @@ async def test_upsert_release_update_all_fields(use_case, repo):
         year=2025,
         page_count=50,
     )
-    result = await use_case.execute(updated)
+    result, was_created = await use_case.execute(updated)
     assert result.title == "New Title"
     assert result.url == "https://example.com/new.pdf"
     assert result.filename == "new.pdf"
     assert result.year == 2025
     assert result.page_count == 50
+    assert was_created is False

@@ -27,11 +27,12 @@ async def test_upsert_allocation_create(use_case, repo):
         operating_unit="Test OU",
         amount=50000.0,
     )
-    result = await use_case.execute(new_allocation)
+    result, was_created = await use_case.execute(new_allocation)
     assert result.nca_number == "NCA-TEST-99-0000001"
     assert result.agency == "Test Agency"
     assert result.operating_unit == "Test OU"
     assert result.amount == 50000.0
+    assert was_created is True
     assert len(repo.allocations) == initial_count + 1
 
 
@@ -46,9 +47,10 @@ async def test_upsert_allocation_update(use_case, repo):
         operating_unit=existing.operating_unit,
         amount=999999.0,
     )
-    result = await use_case.execute(updated_allocation)
+    result, was_created = await use_case.execute(updated_allocation)
     assert result.nca_number == existing.nca_number
     assert result.amount == 999999.0
+    assert was_created is False
     assert len(repo.allocations) == initial_count
     fetched = await repo.get_allocation_by_id(result.id)
     assert fetched is not None
@@ -69,8 +71,9 @@ async def test_upsert_allocation_same_nca_diff_agency(use_case, repo):
         operating_unit=existing_ou,
         amount=1000.0,
     )
-    result = await use_case.execute(diff_agency)
+    result, was_created = await use_case.execute(diff_agency)
     assert result.agency == "Different Agency"
+    assert was_created is True
     assert len(repo.allocations) == initial_count + 1
 
 
@@ -87,8 +90,9 @@ async def test_upsert_allocation_same_nca_diff_ou(use_case, repo):
         operating_unit="Different OU",
         amount=2000.0,
     )
-    result = await use_case.execute(diff_ou)
+    result, was_created = await use_case.execute(diff_ou)
     assert result.operating_unit == "Different OU"
+    assert was_created is True
     assert len(repo.allocations) == initial_count + 1
 
 
@@ -109,6 +113,7 @@ async def test_upsert_allocation_update_same_composite_key(use_case, repo):
         operating_unit=target.operating_unit,
         amount=777777.0,
     )
-    result = await use_case.execute(updated)
+    result, was_created = await use_case.execute(updated)
     assert result.amount == 777777.0
+    assert was_created is False
     assert len(repo.allocations) == initial_count

@@ -37,8 +37,9 @@ class MockAsyncReleaseRepository:
     async def update_release(self, id: str, release: Release) -> Release | None:
         for i, r in enumerate(self.releases):
             if r.id == id:
-                self.releases[i] = release
-                return release
+                updated = release.model_copy(update={"id": id})
+                self.releases[i] = updated
+                return updated
         return None
 
     async def delete_release(self, id: str) -> bool:

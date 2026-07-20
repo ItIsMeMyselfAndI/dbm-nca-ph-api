@@ -52,8 +52,9 @@ class MockAsyncRecordRepository:
     async def update_record(self, id: str, record: Record) -> Record | None:
         for i, r in enumerate(self.records):
             if r.id == id:
-                self.records[i] = record
-                return record
+                updated = record.model_copy(update={"id": id})
+                self.records[i] = updated
+                return updated
         return None
 
     async def delete_record(self, id: str) -> bool:

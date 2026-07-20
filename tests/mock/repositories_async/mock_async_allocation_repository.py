@@ -52,8 +52,9 @@ class MockAsyncAllocationRepository:
     async def update_allocation(self, id: str, allocation: Allocation) -> Allocation | None:
         for i, a in enumerate(self.allocations):
             if a.id == id:
-                self.allocations[i] = allocation
-                return allocation
+                updated = allocation.model_copy(update={"id": id})
+                self.allocations[i] = updated
+                return updated
         return None
 
     async def delete_allocation(self, id: str) -> bool:
