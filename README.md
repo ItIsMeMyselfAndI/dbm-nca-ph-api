@@ -67,7 +67,7 @@ sudo systemctl enable postgresql
 
 **Create database and user:**
 ```bash
-sudo -iu postgres createuser --superuser <name>
+sudo -iu postgres createuser --superuser <name> -P
 sudo -iu postgres createdb -O <name> dbm_nca_ph
 ```
 
