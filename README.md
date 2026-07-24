@@ -1,9 +1,9 @@
 # Philippine DBM NCA API
 
-FastAPI-based API for querying Philippine Department of Budget and Management (DBM) Notice of Cash Allocation (NCA) data.
+FastAPI-based API for querying Philippine Department of Budget and Management (DBM) Notice of Cash Allocation (NCA) data. Built with Clean Architecture, it exposes both a synchronous (v1) and asynchronous (v2) API over identical read endpoint surfaces, plus a set of authenticated write endpoints.
 
 > **Self-hosting guide:** [`docs/guides/self-hosting-guide.md`](docs/guides/self-hosting-guide.md) — step-by-step deployment behind Cloudflare Tunnel.  
-> **Architecture:** [`docs/self-hosting-architecture.md`](docs/self-hosting-architecture.md) — why Cloudflare Tunnel and how it works.
+> **API documentation:** [`docs/api-documentation.md`](docs/api-documentation.md) — full reference of all endpoints, schemas, and examples.
 
 ## Setup
 

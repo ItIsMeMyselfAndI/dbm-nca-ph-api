@@ -10,8 +10,8 @@ from src.presentation.api import v1
 from src.presentation.api import v2
 
 app = FastAPI(title="Philippine DBM NCA API")
-app.include_router(v1.router, prefix="/api")
-app.include_router(v2.router, prefix="/api")
+app.include_router(v1.router)
+app.include_router(v2.router)
 
 app.add_middleware(SlowAPIMiddleware)
 app.add_middleware(

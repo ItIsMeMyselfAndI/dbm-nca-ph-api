@@ -55,7 +55,7 @@ def client(mock_allocation_repository, mock_record_repository, mock_release_repo
     app.dependency_overrides[get_record_repository] = lambda: mock_record_repository
     app.dependency_overrides[get_release_repository] = lambda: mock_release_repository
 
-    with TestClient(app, base_url="http://testserver/api/v1") as c:
+    with TestClient(app, base_url="http://testserver/v1") as c:
         yield c
 
     app.dependency_overrides = {}

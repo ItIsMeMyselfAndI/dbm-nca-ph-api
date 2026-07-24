@@ -129,7 +129,7 @@ async def clean_db():
 
 @pytest.fixture
 def client():
-    with TestClient(app, base_url="http://testserver/api/v2") as c:
+    with TestClient(app, base_url="http://testserver/v2") as c:
         yield c
 
 

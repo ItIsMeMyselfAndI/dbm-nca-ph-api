@@ -76,7 +76,7 @@ tests/v2/
 
 ### Auth for Write Endpoints
 
-- Write endpoints are mounted under `/api/v2/private/`
+- Write endpoints are mounted under `/v2/private/`
 - The private router has `dependencies=[Depends(require_pipeline_key)]`
 - The test client sends `X-API-Key: test-api-key-123` via the `auth_header` fixture
 - Auth is set via `PIPELINE_API_KEY` env var (defaults to `test-api-key-123` in conftest)
