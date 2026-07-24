@@ -402,7 +402,7 @@ credentials-file: <user_home>/.cloudflared/<your-tunnel-id>.json
 
 ingress:
   # Forward traffic for your domain to Nginx on localhost:8080
-  - hostname: api.<domain>
+  - hostname: <subdomain>.<domain>
     service: http://127.0.0.1:8080
   # Catch-all: reject any other traffic
   - service: http_status:404
@@ -412,7 +412,7 @@ ingress:
 
 ```bash
 # Route your domain to the tunnel
-cloudflared tunnel route dns dbm-nca-api api.<domain>
+cloudflared tunnel route dns dbm-nca-api <subdomain>.<domain>
 ```
 
 This creates a CNAME record in Cloudflare DNS pointing your domain to the tunnel endpoint automatically.
@@ -433,7 +433,7 @@ server {
     listen 127.0.0.1:8080;
 
     # server_name must match the hostname already routed to this tunnel via DNS
-    server_name api.<domain>;
+    server_name <subdomain>.<domain>;
 
     # client_max_body_size 50M allows file uploads up to 50 MB
     # Nginx default is 1M — too small for attachments or bulk data
@@ -514,7 +514,7 @@ sudo systemctl status cloudflared
 The tunnel is now running. Traffic flows:
 
 ```
-User → https://api.<domain> → Cloudflare edge → cloudflared tunnel → Nginx (localhost:8080) → uvicorn
+User → https://<subdomain>.<domain> → Cloudflare edge → cloudflared tunnel → Nginx (localhost:8080) → uvicorn
 ```
 
 No router port forwarding needed. No firewall changes needed (other than allowing SSH). No local SSL cert required — Cloudflare handles HTTPS end-to-end.
@@ -686,7 +686,7 @@ curl http://127.0.0.1:8000/
 
 ```bash
 # Via domain (HTTPS) — Cloudflare edge → tunnel → Nginx → uvicorn
-curl https://api.<domain>/
+curl https://<subdomain>.<domain>/
 
 # Verify tunnel is connected
 sudo journalctl -u cloudflared --no-pager | tail -10
