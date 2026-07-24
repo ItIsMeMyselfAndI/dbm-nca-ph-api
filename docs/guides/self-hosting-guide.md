@@ -1,4 +1,4 @@
-# Hosting Guide: Philippine DBM NCA API
+# Self Hosting Guide: Philippine DBM NCA API
 
 This guide walks through deploying the **Philippine DBM NCA API** (FastAPI) to the public internet using this Ubuntu server.
 
@@ -51,14 +51,16 @@ Install system-level dependencies:
 sudo apt update && sudo apt upgrade -y
 
 # Install all required software in one command:
-#   python3, python3-venv, python3-pip  — the Python 3 runtime,
-#     venv for isolated virtual environments, pip for package management
+#   python3  — the Python 3 runtime
 #   nginx  — reverse proxy that sits between the internet and uvicorn;
 #     handles TLS termination, rate limiting, and serves static files efficiently
 #   postgresql, postgresql-client  — the database server and CLI tool;
 #     v2 of the API stores data in a local PostgreSQL instance
-#   git, curl  — git to clone the repository, curl to test endpoints
-sudo apt install -y python3 python3-venv python3-pip nginx postgresql postgresql-client git curl
+#   git, curl  — git to clone the repository, curl to test endpoints and install uv
+sudo apt install -y python3 nginx postgresql postgresql-client git curl
+
+# Install uv (fast Python package manager, replaces pip + venv)
+curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 
 ---
@@ -114,21 +116,21 @@ Then inside the PostgreSQL shell:
 -- Create an application-specific user instead of using postgres superuser
 -- This follows the principle of least privilege — the API only gets the
 -- permissions it needs and nothing more
-CREATE USER dbm_user WITH PASSWORD 'your_strong_password';
+CREATE USER <db_user> WITH PASSWORD '<db_password>';
 
--- Create a dedicated database with dbm_user as its owner
--- OWNER gives dbm_user full control over this database
-CREATE DATABASE dbm_nca_ph OWNER dbm_user;
+-- Create a dedicated database with <db_user> as its owner
+-- OWNER gives <db_user> full control over this database
+CREATE DATABASE dbm_nca_ph OWNER <db_user>;
 
 -- Grant all database-level privileges to the user
-GRANT ALL PRIVILEGES ON DATABASE dbm_nca_ph TO dbm_user;
+GRANT ALL PRIVILEGES ON DATABASE dbm_nca_ph TO <db_user>;
 
 -- Connect to the newly created database
 \c dbm_nca_ph
 
 -- By default, the public schema is owned by the postgres superuser
--- This grant allows dbm_user to create and modify tables in it
-GRANT ALL ON SCHEMA public TO dbm_user;
+-- This grant allows <db_user> to create and modify tables in it
+GRANT ALL ON SCHEMA public TO <db_user>;
 
 -- Exit the PostgreSQL shell
 \q
@@ -137,12 +139,12 @@ GRANT ALL ON SCHEMA public TO dbm_user;
 ### 4.3 Import Schema
 
 ```bash
-# -U dbm_user connects as our application user (not superuser)
+# -U <db_user> connects as our application user (not superuser)
 # -d dbm_nca_ph targets the database we just created
 # -h localhost forces TCP connection (required for md5 auth)
 # -f supabase_schema.sql reads and executes the SQL file
 # supabase_schema.sql defines the tables: release, record, allocation
-psql -U dbm_user -d dbm_nca_ph -h localhost -f supabase_schema.sql
+psql -U <db_user> -d dbm_nca_ph -h localhost -f supabase_schema.sql
 ```
 
 ### 4.4 Allow Password Authentication
@@ -159,10 +161,10 @@ sudo nano /etc/postgresql/*/main/pg_hba.conf
 Find the line for IPv4 local connections and ensure it reads:
 
 ```
-host    dbm_nca_ph      dbm_user        127.0.0.1/32            md5
+host    dbm_nca_ph      <db_user>        127.0.0.1/32            md5
 ```
 
-This means: for TCP connections from 127.0.0.1 to database `dbm_nca_ph` as user `dbm_user`, require an MD5-encrypted password.
+This means: for TCP connections from 127.0.0.1 to database `dbm_nca_ph` as user `<db_user>`, require an MD5-encrypted password.
 
 Then restart PostgreSQL:
 
@@ -180,10 +182,10 @@ sudo systemctl restart postgresql
 ```bash
 cd /opt/dbm-nca-ph-api
 
-# python3 -m venv creates an isolated Python environment
+# uv venv creates an isolated Python environment
 # Isolation prevents dependency conflicts between projects
 # .venv is the conventional name for the virtual environment directory
-python3 -m venv .venv
+uv venv .venv
 
 # source .venv/bin/activate adds the virtual environment's bin dir to PATH
 # After activation, python and pip point to the isolated environment,
@@ -194,17 +196,11 @@ source .venv/bin/activate
 ### 5.2 Install Dependencies
 
 ```bash
-# Upgrade pip inside the virtual environment first
-# Older pip versions may fail to resolve complex dependency trees
-pip install --upgrade pip
-
 # Install all project dependencies from requirements.txt
 # -r means "read from file"
 # requirements.txt pins exact versions for reproducible builds
-pip install -r requirements.txt
+uv pip install -r requirements.txt
 ```
-
-> **Tip:** If you have `uv` installed, you can use `uv pip install -r requirements.txt` for faster installs.
 
 ---
 
@@ -309,7 +305,7 @@ Before setting up the **Cloudflare Tunnel**, you must first add your domain to C
 ##### Step 1: Create a Cloudflare Account
 
 1. Go to [https://dash.cloudflare.com/sign-up](https://dash.cloudflare.com/sign-up) and create a free account.
-2. Click **Add a domain** and enter your domain (e.g., `yourdomain.com`).
+2. Click **Add a domain** and enter your domain (e.g., `<domain>`).
 3. Cloudflare will scan your existing DNS records (the A record you already created at your registrar). It should find it automatically.
 4. Click **Continue**.
 
@@ -402,11 +398,11 @@ sudo nano /etc/cloudflared/config.yml
 ```yaml
 # Tunnel ID from "cloudflared tunnel create"
 tunnel: <your-tunnel-id>
-credentials-file: /home/eger/.cloudflared/<your-tunnel-id>.json
+credentials-file: <user_home>/.cloudflared/<your-tunnel-id>.json
 
 ingress:
   # Forward traffic for your domain to Nginx on localhost:8080
-  - hostname: api.yourdomain.com
+  - hostname: api.<domain>
     service: http://127.0.0.1:8080
   # Catch-all: reject any other traffic
   - service: http_status:404
@@ -416,7 +412,7 @@ ingress:
 
 ```bash
 # Route your domain to the tunnel
-cloudflared tunnel route dns dbm-nca-api api.yourdomain.com
+cloudflared tunnel route dns dbm-nca-api api.<domain>
 ```
 
 This creates a CNAME record in Cloudflare DNS pointing your domain to the tunnel endpoint automatically.
@@ -437,7 +433,7 @@ server {
     listen 127.0.0.1:8080;
 
     # server_name must match the hostname already routed to this tunnel via DNS
-    server_name api.yourdomain.com;
+    server_name api.<domain>;
 
     # client_max_body_size 50M allows file uploads up to 50 MB
     # Nginx default is 1M — too small for attachments or bulk data
@@ -518,7 +514,7 @@ sudo systemctl status cloudflared
 The tunnel is now running. Traffic flows:
 
 ```
-User → https://api.yourdomain.com → Cloudflare edge → cloudflared tunnel → Nginx (localhost:8080) → uvicorn
+User → https://api.<domain> → Cloudflare edge → cloudflared tunnel → Nginx (localhost:8080) → uvicorn
 ```
 
 No router port forwarding needed. No firewall changes needed (other than allowing SSH). No local SSL cert required — Cloudflare handles HTTPS end-to-end.
@@ -613,15 +609,15 @@ sudo nano /opt/dbm-nca-ph-api/.env
 # Supabase (v1)
 # Only needed if you use v1 routes that connect to Supabase
 # Leave blank if you only serve v2 (local PostgreSQL) routes
-SUPABASE_URL=your_supabase_url
-SUPABASE_ANON_KEY=your_supabase_anon_key
+SUPABASE_URL=<supabase_url>
+SUPABASE_ANON_KEY=<supabase_anon_key>
 
 # PostgreSQL (v2)
 # PSQL_HOST=localhost because PostgreSQL runs on the same machine
 # If PostgreSQL were on a different server, this would be that server's IP
 PSQL_HOST=localhost
-PSQL_USER=dbm_user
-PSQL_PASS=your_strong_password
+PSQL_USER=<db_user>
+PSQL_PASS=<db_password>
 PSQL_DB_NAME=dbm_nca_ph
 # Test database — used only when running pytest
 PSQL_TEST_DB_NAME=dbm_nca_ph_test
@@ -629,7 +625,7 @@ PSQL_TEST_DB_NAME=dbm_nca_ph_test
 # API Auth
 # Used by require_pipeline_key dependency to authenticate write operations
 # Generate this with: openssl rand -hex 32
-PIPELINE_API_KEY=your_generated_hex_key
+PIPELINE_API_KEY=<pipeline_api_key>
 ```
 
 Ensure the file is readable only by the service user:
@@ -690,7 +686,7 @@ curl http://127.0.0.1:8000/
 
 ```bash
 # Via domain (HTTPS) — Cloudflare edge → tunnel → Nginx → uvicorn
-curl https://api.yourdomain.com/
+curl https://api.<domain>/
 
 # Verify tunnel is connected
 sudo journalctl -u cloudflared --no-pager | tail -10
@@ -720,8 +716,8 @@ git pull origin main
 # Activate the virtual environment and install any new/changed dependencies
 # If requirements.txt hasn't changed, this is a no-op
 source .venv/bin/activate
-# pip install reads requirements.txt and installs/upgrades all listed packages
-pip install -r requirements.txt
+# uv pip install reads requirements.txt and installs/upgrades all listed packages
+uv pip install -r requirements.txt
 # Restart the service to reload the updated code into memory
 # FastAPI doesn't have hot-reload in production by design
 sudo systemctl restart dbm-nca-ph-api
@@ -746,11 +742,11 @@ sudo systemctl status postgresql
 
 ```bash
 # pg_dump creates a SQL dump of the database
-# -U dbm_user authenticates as the application user
+# -U <db_user> authenticates as the application user
 # -h localhost connects over TCP
 # > redirects the output to a timestamped file
 # $(date +%Y%m%d) produces a date like 20260723 for easy sorting
-pg_dump -U dbm_user -h localhost dbm_nca_ph > /opt/backups/dbm_nca_ph_$(date +%Y%m%d).sql
+pg_dump -U <db_user> -h localhost dbm_nca_ph > /opt/backups/dbm_nca_ph_$(date +%Y%m%d).sql
 ```
 
 Add this to a cron job for automated daily backups:
@@ -766,5 +762,5 @@ Add:
 ```
 # Runs every day at 2:00 AM system time
 # The % signs in $(date...) are escaped with \ because % is special in cron
-0 2 * * * pg_dump -U dbm_user -h localhost dbm_nca_ph > /opt/backups/dbm_nca_ph_$(date +\%Y\%m\%d).sql
+0 2 * * * pg_dump -U <db_user> -h localhost dbm_nca_ph > /opt/backups/dbm_nca_ph_$(date +\%Y\%m\%d).sql
 ```
