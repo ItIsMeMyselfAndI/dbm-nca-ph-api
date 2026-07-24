@@ -8,6 +8,7 @@ from slowapi.util import get_remote_address
 
 from src.presentation.api import v1
 from src.presentation.api import v2
+from src.presentation.api.schemas import EndpointInfo, IndexResponse
 
 app = FastAPI(title="Philippine DBM NCA API")
 app.include_router(v1.router)
@@ -28,9 +29,22 @@ app.add_exception_handler(
 )
 
 
-@app.get("/")
+@app.get("/", response_model=IndexResponse)
 def root():
-    return {"message": "API is running", "docs": "/docs"}
+    return IndexResponse(
+        title="DBM NCA PH API",
+        version="root",
+        description="Philippine Department of Budget and Management (DBM) Notice of Cash Allocation (NCA) API. Provides access to DBM release, record, and allocation data via two backend versions.",
+        endpoints=[
+            EndpointInfo(method="GET", path="/v1/", description="v1 synchronous API index (Supabase backend)"),
+            EndpointInfo(method="GET", path="/v2/", description="v2 asynchronous API index (PostgreSQL backend)"),
+            EndpointInfo(method="GET", path="/v1/releases", description="List releases via v1"),
+            EndpointInfo(method="GET", path="/v2/releases", description="List releases via v2"),
+            EndpointInfo(method="GET", path="/v1/records", description="List records via v1"),
+            EndpointInfo(method="GET", path="/v2/records", description="List records via v2"),
+        ],
+        docs_url="/docs",
+    )
 
 
 if __name__ == "__main__":
