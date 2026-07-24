@@ -59,3 +59,17 @@ class AllocationCreate(BaseModel):
     agency: str
     operating_unit: str
     amount: float
+
+
+class EndpointInfo(BaseModel):
+    method: str
+    path: str
+    description: str
+
+
+class IndexResponse(BaseModel):
+    title: str
+    version: str
+    description: str
+    endpoints: list[EndpointInfo]
+    docs_url: str
